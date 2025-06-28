@@ -1,0 +1,272 @@
+[
+    {
+        "id": 1,
+        "name": "Dell XPS 13",
+        "brand": "Dell",
+        "category": "laptop",
+        "images": [
+            "images/dell-xps13-1.jpg",
+            "images/dell-xps13-2.jpg"
+        ],
+        "specification": {
+            "processor": "Intel Core i7-1165G7",
+            "ram": "16GB LPDDR4x",
+            "ssd": "512GB NVMe",
+            "display": "13.4-inch FHD+ (1920x1200)",
+            "graphic": "Intel Iris Xe",
+            "storage": "512GB",
+            "battery": "52Wh, up to 12 hours",
+            "utility_properties": "Backlit Keyboard, Fingerprint Reader",
+            "weight": "1.2kg",
+            "dimensions": "295.7 x 198.7 x 14.8 mm",
+            "color": "Silver",
+            "condition": "used"
+        },
+        "description": "A compact and powerful ultrabook, perfect for professionals and students.",
+        "availability": true,
+        "price": 850
+    },
+    {
+        "id": 2,
+        "name": "Apple MacBook Pro 15",
+        "brand": "Apple",
+        "category": "laptop",
+        "images": [
+            "images/macbook-pro15-1.jpg",
+            "images/macbook-pro15-2.jpg"
+        ],
+        "specification": {
+            "processor": "Intel Core i7 9th Gen",
+            "ram": "16GB DDR4",
+            "ssd": "512GB SSD",
+            "display": "15.4-inch Retina (2880x1800)",
+            "graphic": "AMD Radeon Pro 555X",
+            "storage": "512GB",
+            "battery": "83.6Wh, up to 10 hours",
+            "utility_properties": "Touch Bar, Touch ID",
+            "weight": "1.83kg",
+            "dimensions": "349.3 x 240.7 x 15.5 mm",
+            "color": "Space Gray",
+            "condition": "used"
+        },
+        "description": "A high-performance MacBook for creative professionals.",
+        "availability": true,
+        "price": 1200
+    },
+    {
+        "id": 3,
+        "name": "HP Spectre x360",
+        "brand": "HP",
+        "category": "laptop",
+        "images": [
+            "images/hp-spectre-x360-1.jpg",
+            "images/hp-spectre-x360-2.jpg"
+        ],
+        "specification": {
+            "processor": "Intel Core i5-1135G7",
+            "ram": "8GB DDR4",
+            "ssd": "256GB SSD",
+            "display": "13.3-inch FHD Touch (1920x1080)",
+            "graphic": "Intel Iris Xe",
+            "storage": "256GB",
+            "battery": "60Wh, up to 13 hours",
+            "utility_properties": "Convertible, Touchscreen",
+            "weight": "1.3kg",
+            "dimensions": "306 x 194.5 x 16.9 mm",
+            "color": "Nightfall Black",
+            "condition": "used"
+        },
+        "description": "A versatile 2-in-1 laptop with a sleek design and long battery life.",
+        "availability": true,
+        "price": 700
+    },
+    {
+        "id": 4,
+        "name": "Lenovo ThinkPad X1 Carbon",
+        "brand": "Lenovo",
+        "category": "laptop",
+        "images": [
+            "images/thinkpad-x1-carbon-1.jpg",
+            "images/thinkpad-x1-carbon-2.jpg"
+        ],
+        "specification": {
+            "processor": "Intel Core i7-10510U",
+            "ram": "16GB LPDDR3",
+            "ssd": "1TB SSD",
+            "display": "14-inch FHD (1920x1080)",
+            "graphic": "Intel UHD Graphics",
+            "storage": "1TB",
+            "battery": "51Wh, up to 15 hours",
+            "utility_properties": "Fingerprint Reader, Backlit Keyboard",
+            "weight": "1.09kg",
+            "dimensions": "323 x 217 x 14.9 mm",
+            "color": "Black",
+            "condition": "used"
+        },
+        "description": "A lightweight business laptop with robust security features.",
+        "availability": true,
+        "price": 950
+    },
+    {
+        "id": 5,
+        "name": "Acer Aspire 7",
+        "brand": "Acer",
+        "category": "laptop",
+        "images": [
+            "images/acer-aspire7-1.jpg",
+            "images/acer-aspire7-2.jpg"
+        ],
+        "specification": {
+            "processor": "AMD Ryzen 5 3550H",
+            "ram": "8GB DDR4",
+            "ssd": "512GB SSD",
+            "display": "15.6-inch FHD (1920x1080)",
+            "graphic": "NVIDIA GTX 1650",
+            "storage": "512GB",
+            "battery": "48Wh, up to 7 hours",
+            "utility_properties": "Numeric Keypad",
+            "weight": "2.15kg",
+            "dimensions": "363.4 x 254.5 x 23.25 mm",
+            "color": "Charcoal Black",
+            "condition": "used"
+        },
+        "description": "A budget-friendly gaming laptop with solid performance.",
+        "availability": true,
+        "price": 600
+    },
+    {
+        "id": 6,
+        "name": "Asus ZenBook 14",
+        "brand": "Asus",
+        "category": "laptop",
+        "images": [
+            "images/asus-zenbook14-1.jpg",
+            "images/asus-zenbook14-2.jpg"
+        ],
+        "specification": {
+            "processor": "Intel Core i5-1135G7",
+            "ram": "8GB LPDDR4x",
+            "ssd": "512GB SSD",
+            "display": "14-inch FHD (1920x1080)",
+            "graphic": "Intel Iris Xe",
+            "storage": "512GB",
+            "battery": "67Wh, up to 16 hours",
+            "utility_properties": "NumberPad, ErgoLift Hinge",
+            "weight": "1.17kg",
+            "dimensions": "319 x 199 x 16.9 mm",
+            "color": "Royal Blue",
+            "condition": "used"
+        },
+        "description": "A stylish ultrabook with excellent battery life and portability.",
+        "availability": true,
+        "price": 750
+    },
+    {
+        "id": 7,
+        "name": "MSI GF63 Thin",
+        "brand": "MSI",
+        "category": "laptop",
+        "images": [
+            "images/msi-gf63-1.jpg",
+            "images/msi-gf63-2.jpg"
+        ],
+        "specification": {
+            "processor": "Intel Core i5-9300H",
+            "ram": "8GB DDR4",
+            "ssd": "256GB SSD",
+            "display": "15.6-inch FHD (1920x1080)",
+            "graphic": "NVIDIA GTX 1650 Max-Q",
+            "storage": "256GB",
+            "battery": "51Wh, up to 7 hours",
+            "utility_properties": "Red Backlit Keyboard",
+            "weight": "1.86kg",
+            "dimensions": "359 x 254 x 21.7 mm",
+            "color": "Black",
+            "condition": "used"
+        },
+        "description": "A slim gaming laptop with powerful graphics for gaming on the go.",
+        "availability": true,
+        "price": 680
+    },
+    {
+        "id": 8,
+        "name": "Microsoft Surface Laptop 3",
+        "brand": "Microsoft",
+        "category": "laptop",
+        "images": [
+            "images/surface-laptop3-1.jpg",
+            "images/surface-laptop3-2.jpg"
+        ],
+        "specification": {
+            "processor": "Intel Core i5-1035G7",
+            "ram": "8GB LPDDR4x",
+            "ssd": "256GB SSD",
+            "display": "13.5-inch PixelSense (2256x1504)",
+            "graphic": "Intel Iris Plus",
+            "storage": "256GB",
+            "battery": "45.8Wh, up to 11.5 hours",
+            "utility_properties": "Touchscreen",
+            "weight": "1.29kg",
+            "dimensions": "308 x 223 x 14.5 mm",
+            "color": "Platinum",
+            "condition": "used"
+        },
+        "description": "A premium touchscreen laptop with a sleek and lightweight design.",
+        "availability": true,
+        "price": 800
+    },
+    {
+        "id": 9,
+        "name": "Razer Blade 15",
+        "brand": "Razer",
+        "category": "laptop",
+        "images": [
+            "images/razer-blade15-1.jpg",
+            "images/razer-blade15-2.jpg"
+        ],
+        "specification": {
+            "processor": "Intel Core i7-10750H",
+            "ram": "16GB DDR4",
+            "ssd": "512GB SSD",
+            "display": "15.6-inch FHD 144Hz (1920x1080)",
+            "graphic": "NVIDIA RTX 2060",
+            "storage": "512GB",
+            "battery": "65Wh, up to 6 hours",
+            "utility_properties": "RGB Keyboard",
+            "weight": "2.1kg",
+            "dimensions": "355 x 235 x 17.8 mm",
+            "color": "Black",
+            "condition": "used"
+        },
+        "description": "A high-end gaming laptop with a fast display and powerful GPU.",
+        "availability": true,
+        "price": 1300
+    },
+    {
+        "id": 10,
+        "name": "Samsung Galaxy Book Flex",
+        "brand": "Samsung",
+        "category": "laptop",
+        "images": [
+            "images/galaxy-book-flex-1.jpg",
+            "images/galaxy-book-flex-2.jpg"
+        ],
+        "specification": {
+            "processor": "Intel Core i7-1065G7",
+            "ram": "12GB LPDDR4x",
+            "ssd": "512GB SSD",
+            "display": "13.3-inch QLED Touch (1920x1080)",
+            "graphic": "Intel Iris Plus",
+            "storage": "512GB",
+            "battery": "69.7Wh, up to 19 hours",
+            "utility_properties": "S Pen, Convertible",
+            "weight": "1.16kg",
+            "dimensions": "302.6 x 202.9 x 12.9 mm",
+            "color": "Royal Blue",
+            "condition": "used"
+        },
+        "description": "A convertible laptop with a vibrant QLED display and S Pen support.",
+        "availability": true,
+        "price": 900
+    }
+]
