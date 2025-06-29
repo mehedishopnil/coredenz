@@ -45,7 +45,7 @@ const Header = () => {
                         <FaInstagram className="text-gray-500 hover:text-pink-500 text-xl" />
                     </a>
                     <a href="tel:+1234567890" className="flex items-center text-gray-700 hover:text-blue-500 font-medium">
-                        <FaPhone className="mr-1" /> <span className="hidden lg:inline">+1 234 567 890</span>
+                        <FaPhone className="mr-1" /> <span className="hidden lg:inline">01316265634</span>
                     </a>
                 </div>
 

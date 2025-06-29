@@ -5,8 +5,8 @@
         "brand": "Dell",
         "category": "laptop",
         "images": [
-            "images/dell-xps13-1.jpg",
-            "images/dell-xps13-2.jpg"
+            "https://www.pcworld.com/wp-content/uploads/2025/04/XPS-13-Graphite-4-large-1.jpg?quality=50&strip=all",
+            "https://www.ubuy.com.bd/productimg/?image=aHR0cHM6Ly9tLm1lZGlhLWFtYXpvbi5jb20vaW1hZ2VzL0kvNzEwRUdKQmRJTUwuX0FDX1NMMTUwMF8uanBn.jpg"
         ],
         "specification": {
             "processor": "Intel Core i7-1165G7",
@@ -32,8 +32,8 @@
         "brand": "Apple",
         "category": "laptop",
         "images": [
-            "images/macbook-pro15-1.jpg",
-            "images/macbook-pro15-2.jpg"
+            "https://www.stockmustgo.co.uk/cdn/shop/products/4599600_sd.jpg?v=1677674670&width=1500",
+            "https://i01.hsncdn.com/is/image/HomeShoppingNetwork/rocs1200/apple-macbook-pro-13-m2-256gb-8-core-cpu-10-core-gpu-bu-d-20240130111145193~20629088w_alt2.jpg"
         ],
         "specification": {
             "processor": "Intel Core i7 9th Gen",
