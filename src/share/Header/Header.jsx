@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { FaBars, FaTimes, FaFacebook, FaTwitter, FaInstagram, FaPhone, FaReact } from 'react-icons/fa';
 
 const navItems = [
-    { name: 'Home', href: '#' },
-    { name: 'About', href: '#' },
-    { name: 'Services', href: '#' },
-    { name: 'Contact', href: '#' },
+    { name: 'Home', href: '/' },
+    { name: 'Laptops', href: '/laptops' },
+    { name: 'About', href: '/about' },
+    { name: 'Services', href: '/services' },
+    { name: 'Contact', href: '/contact' },
 ];
 
 const Header = () => {
