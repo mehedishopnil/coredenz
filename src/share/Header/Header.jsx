@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { FaBars, FaTimes, FaFacebook, FaTwitter, FaInstagram, FaPhone, FaReact } from 'react-icons/fa';
+import React, { useState, useContext } from 'react';
+import { FaBars, FaTimes, FaFacebook, FaTwitter, FaInstagram, FaPhone, FaReact, FaUser, FaSignOutAlt } from 'react-icons/fa';
+import { Link } from 'react-router';
+import { AuthContext } from '../../provider/AuthProvider/AuthProvider';
 
 const navItems = [
     { name: 'Home', href: '/' },
@@ -11,6 +13,13 @@ const navItems = [
 
 const Header = () => {
     const [menuOpen, setMenuOpen] = useState(false);
+    const { user, loading } = useContext(AuthContext);
+
+    const handleLogout = () => {
+        // Implement your logout logic here
+        console.log('User logged out');
+        setMenuOpen(false);
+    };
 
     return (
         <header className="w-full bg-white shadow-md fixed top-0 left-0 z-50">
@@ -24,30 +33,69 @@ const Header = () => {
                 {/* Nav Menu - Desktop */}
                 <nav className="hidden md:flex space-x-8">
                     {navItems.map((item) => (
-                        <a
+                        <Link
                             key={item.name}
-                            href={item.href}
+                            to={item.href}
                             className="text-gray-700 hover:text-blue-500 font-medium transition-colors"
                         >
                             {item.name}
-                        </a>
+                        </Link>
                     ))}
                 </nav>
 
-                {/* Right Side */}
-                <div className="hidden md:flex items-center space-x-4">
-                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-                        <FaFacebook className="text-gray-500 hover:text-blue-600 text-xl" />
-                    </a>
-                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-                        <FaTwitter className="text-gray-500 hover:text-blue-400 text-xl" />
-                    </a>
-                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-                        <FaInstagram className="text-gray-500 hover:text-pink-500 text-xl" />
-                    </a>
+                {/* Right Side - Desktop */}
+                <div className="hidden md:flex items-center space-x-6">
+                    {/* Social Icons */}
+                    <div className="flex items-center space-x-4">
+                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+                            <FaFacebook className="text-gray-500 hover:text-blue-600 text-xl" />
+                        </a>
+                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+                            <FaTwitter className="text-gray-500 hover:text-blue-400 text-xl" />
+                        </a>
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+                            <FaInstagram className="text-gray-500 hover:text-pink-500 text-xl" />
+                        </a>
+                    </div>
+
+                    {/* Phone Number */}
                     <a href="tel:+1234567890" className="flex items-center text-gray-700 hover:text-blue-500 font-medium">
                         <FaPhone className="mr-1" /> <span className="hidden lg:inline">01316265634</span>
                     </a>
+
+                    {/* Auth Buttons */}
+                    {!loading && (
+                        <div className="flex items-center space-x-4 ml-2">
+                            {user ? (
+                                <div className="flex items-center space-x-4">
+                                    <span className="text-gray-700 font-medium flex items-center">
+                                        <FaUser className="mr-1" /> {user.name || 'User'}
+                                    </span>
+                                    <button 
+                                        onClick={handleLogout}
+                                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md flex items-center transition-colors"
+                                    >
+                                        <FaSignOutAlt className="mr-1" /> Logout
+                                    </button>
+                                </div>
+                            ) : (
+                                <>
+                                    <Link 
+                                        to="/sign-in" 
+                                        className="text-gray-700 hover:text-blue-500 font-medium transition-colors"
+                                    >
+                                        Sign In
+                                    </Link>
+                                    <Link 
+                                        to="/register" 
+                                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors"
+                                    >
+                                        Sign Up
+                                    </Link>
+                                </>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 {/* Hamburger - Mobile */}
@@ -76,16 +124,54 @@ const Header = () => {
                 {/* Menu Content */}
                 <nav className="flex flex-col space-y-4 px-6 pb-4">
                     {navItems.map((item) => (
-                        <a
+                        <Link
                             key={item.name}
-                            href={item.href}
+                            to={item.href}
                             className="text-gray-700 hover:text-blue-500 font-medium transition-colors py-2"
                             onClick={() => setMenuOpen(false)}
                         >
                             {item.name}
-                        </a>
+                        </Link>
                     ))}
-                    <div className="flex items-center space-x-4 mt-8">
+
+                    {/* Mobile Auth Buttons */}
+                    {!loading && (
+                        <div className="pt-4 border-t border-gray-200 mt-4">
+                            {user ? (
+                                <div className="flex flex-col space-y-4">
+                                    <div className="flex items-center text-gray-700 font-medium">
+                                        <FaUser className="mr-2" /> {user.name || 'User'}
+                                    </div>
+                                    <button 
+                                        onClick={handleLogout}
+                                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md flex items-center justify-center transition-colors"
+                                    >
+                                        <FaSignOutAlt className="mr-2" /> Logout
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col space-y-3">
+                                    <Link 
+                                        to="/sign-in" 
+                                        className="text-center text-gray-700 hover:text-blue-500 font-medium transition-colors py-2 border border-gray-300 rounded-md"
+                                        onClick={() => setMenuOpen(false)}
+                                    >
+                                        Sign In
+                                    </Link>
+                                    <Link 
+                                        to="/register" 
+                                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-center transition-colors"
+                                        onClick={() => setMenuOpen(false)}
+                                    >
+                                        Sign Up
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Mobile Social Icons */}
+                    <div className="flex items-center justify-center space-x-4 mt-8">
                         <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
                             <FaFacebook className="text-gray-500 hover:text-blue-600 text-xl" />
                         </a>
@@ -95,10 +181,12 @@ const Header = () => {
                         <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
                             <FaInstagram className="text-gray-500 hover:text-pink-500 text-xl" />
                         </a>
-                        <a href="tel:+1234567890" className="flex items-center text-gray-700 hover:text-blue-500 font-medium">
-                            <FaPhone className="mr-1" /> <span>+1 234 567 890</span>
-                        </a>
                     </div>
+
+                    {/* Mobile Phone Number */}
+                    <a href="tel:+1234567890" className="flex items-center justify-center text-gray-700 hover:text-blue-500 font-medium mt-4">
+                        <FaPhone className="mr-2" /> +1 234 567 890
+                    </a>
                 </nav>
             </div>
 
