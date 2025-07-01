@@ -46,7 +46,7 @@ const Home = () => {
     <div className="min-h-screen bg-gray-50">
       <section className="max-w-6xl mx-auto py-8 px-4">
         <h2 className="text-3xl font-bold mb-6 text-gray-800">
-          Featured Products
+          Featured Products for now
         </h2>
         {products.length === 0 ? (
           <p>No products available</p>
