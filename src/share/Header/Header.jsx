@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { FaBars, FaTimes, FaFacebook, FaTwitter, FaInstagram, FaPhone, FaReact, FaUser, FaSignOutAlt } from 'react-icons/fa';
+import { FaBars, FaTimes, FaFacebook, FaTwitter, FaInstagram, FaPhone, FaReact, FaUser, FaSignOutAlt, FaWhatsapp, FaEnvelope } from 'react-icons/fa';
 import { Link } from 'react-router';
 import { AuthContext } from '../../provider/AuthProvider/AuthProvider';
 import logo from '../../assets/images/CoreDenz-logo.png';
@@ -113,8 +113,7 @@ const Header = () => {
             </div>
 
             {/* Mobile Menu */}
-            <div className={`md:hidden fixed top-0 right-0 h-full w-64 bg-[#03045E
-                ] shadow-lg transform transition-transform duration-300 ease-in-out z-40 ${menuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+            <div className={`md:hidden fixed top-0 right-0 h-full w-64 bg-[#03045E] shadow-lg transform transition-transform duration-300 ease-in-out z-40 ${menuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                 {/* Close Button */}
                 <div className="flex justify-end p-4">
                     <button
@@ -188,9 +187,28 @@ const Header = () => {
                         </a>
                     </div>
 
+                    {/* Here I need mobile, whatsapp and email (with icons) */}
                     {/* Mobile Phone Number */}
-                    <a href="tel:+1234567890" className="flex items-center justify-center text-gray-100 hover:text-blue-500 font-medium mt-4">
-                        <FaPhone className="mr-2" /> +1 234 567 890
+                    <a href="tel:8801316265634" className="flex items-center justify-center text-gray-100 hover:text-blue-500 font-medium mt-4">
+                        <FaPhone className="mr-2" /> 01316265634
+                    </a>
+
+                    {/* WhatsApp */}
+                    <a
+                        href="https://wa.me/8801316265634"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center text-gray-100 hover:text-green-500 font-medium mt-4"
+                    >
+                        <FaWhatsapp className="mr-2" /> 01316265634
+                    </a>
+
+                    {/* Email */}
+                    <a
+                        href="mailto:mehedihasanshopnil.jr@gmail.com"
+                        className="flex items-center justify-center text-[12px] text-gray-100 hover:text-yellow-400 font-medium mt-4"
+                    >
+                        <FaEnvelope className="mr-2" /> mehedihasanshopnil.jr@gmail.com
                     </a>
                 </nav>
             </div>
@@ -198,7 +216,7 @@ const Header = () => {
             {/* Overlay */}
             {menuOpen && (
                 <div 
-                    className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+                    className="fixed inset-0 bg-black bg-opacity-60 z-30 md:hidden"
                     onClick={() => setMenuOpen(false)}
                 />
             )}

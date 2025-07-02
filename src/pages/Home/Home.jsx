@@ -29,8 +29,10 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Banner Section */}
-      <section className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-16 px-4">
-        <div className="max-w-6xl mx-auto text-center">
+      <section className="w-full h-[350px] md:h-[350px] lg:h-[450px]
+       bg-gradient-to-r from-blue-600 to-indigo-700 text-white mt-12
+        py-16 px-4">
+        <div className="mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Welcome to Our Store</h1>
           <p className="text-xl mb-8">Discover amazing products at great prices</p>
           <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-300 shadow-lg hover:shadow-xl">
@@ -40,7 +42,7 @@ const Home = () => {
       </section>
 
       {/* Featured Categories Section */}
-      <section className="max-w-6xl mx-auto py-12 px-4">
+      <section className=" mx-auto py-12 px-4">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold text-gray-800 mb-2">
             Featured Categories
