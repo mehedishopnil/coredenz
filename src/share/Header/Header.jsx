@@ -3,6 +3,7 @@ import { FaBars, FaTimes, FaFacebook, FaTwitter, FaInstagram, FaPhone, FaReact, 
 import { Link } from 'react-router';
 import { AuthContext } from '../../provider/AuthProvider/AuthProvider';
 import logo from '../../assets/images/CoreDenz-logo.png';
+import { FaX } from 'react-icons/fa6';
 
 const navItems = [
     { name: 'Home', href: '/' },
@@ -23,12 +24,12 @@ const Header = () => {
     };
 
     return (
-        <header className="w-full bg-[#03045E] text-white shadow-md fixed top-0 left-0 z-50">
+        <header className="w-full bg-[#03045E]  shadow-md fixed top-0 left-0 z-50">
             <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 md:py-4">
                 {/* Logo */}
                 <Link to="/">
                 <div className="flex items-center space-x-2">
-                    <img src={logo} alt="CoreDenz Logo" className="w-52" />
+                    <img src={logo} alt="CoreDenz Logo" className="w-32 md:w-52" />
                     
                 </div>
                 </Link>
@@ -54,7 +55,7 @@ const Header = () => {
                             <FaFacebook className="text-gray-100 hover:text-blue-600 text-xl" />
                         </a>
                         <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-                            <FaTwitter className="text-gray-100 hover:text-blue-400 text-xl" />
+                            <FaX className="text-gray-100 hover:text-blue-400 text-xl" />
                         </a>
                         <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
                             <FaInstagram className="text-gray-100 hover:text-pink-500 text-xl" />
@@ -112,7 +113,7 @@ const Header = () => {
             </div>
 
             {/* Mobile Menu */}
-            <div className={`md:hidden fixed top-0 right-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-40 ${menuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+            <div className={`md:hidden fixed top-0 right-0 h-full w-64 bg-[#03045E] shadow-lg transform transition-transform duration-300 ease-in-out z-40 ${menuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                 {/* Close Button */}
                 <div className="flex justify-end p-4">
                     <button
@@ -179,7 +180,7 @@ const Header = () => {
                             <FaFacebook className="text-gray-100 hover:text-blue-600 text-xl" />
                         </a>
                         <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-                            <FaTwitter className="text-gray-100 hover:text-blue-400 text-xl" />
+                            <FaX className="text-gray-100 hover:text-blue-400 text-xl" />
                         </a>
                         <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
                             <FaInstagram className="text-gray-100 hover:text-pink-500 text-xl" />
