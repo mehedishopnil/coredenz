@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaMapMarkerAlt, FaPhone, FaEnvelope, FaClock, FaReact } from 'react-icons/fa';
+import logo from '../../assets/images/CoreDenz-logo.png';
 
 const Footer = () => {
     return (
@@ -8,10 +9,7 @@ const Footer = () => {
                 {/* Company Info */}
                 <div className="space-y-4">
                     <div className="flex items-center space-x-2">
-                        <div className="text-blue-500 text-3xl">
-                            <FaReact />
-                        </div>
-                        <span className="font-bold text-2xl">CoreDenz</span>
+                        <img src={logo} alt="coredenz" className="w-52" />
                     </div>
                     <p className="text-gray-400">
                         Your one-stop shop for the latest and greatest products. Shop with confidence and enjoy fast delivery!
