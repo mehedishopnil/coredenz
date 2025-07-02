@@ -25,10 +25,12 @@ const Header = () => {
         <header className="w-full bg-white shadow-md fixed top-0 left-0 z-50">
             <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 md:py-4">
                 {/* Logo */}
+                <Link to="/">
                 <div className="flex items-center space-x-2">
                     <FaReact className="text-blue-500 text-3xl" />
                     <span className="font-bold text-xl text-gray-800">CoreDenz</span>
                 </div>
+                </Link>
 
                 {/* Nav Menu - Desktop */}
                 <nav className="hidden md:flex space-x-8">
@@ -87,7 +89,7 @@ const Header = () => {
                                         Sign In
                                     </Link>
                                     <Link 
-                                        to="/register" 
+                                        to="/sign-up" 
                                         className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors"
                                     >
                                         Sign Up
@@ -159,7 +161,7 @@ const Header = () => {
                                         Sign In
                                     </Link>
                                     <Link 
-                                        to="/register" 
+                                        to="/sign-up" 
                                         className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-center transition-colors"
                                         onClick={() => setMenuOpen(false)}
                                     >
