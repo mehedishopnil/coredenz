@@ -3,6 +3,7 @@ import { FaWhatsapp, FaEnvelope, FaPhone, FaArrowRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import fiverrProfile from "../assets/images/fiverr-Profile-img.png";
 import meFiverrProfile from "../assets/images/Me-fiverr-profile.png"
+import fiverrGigImage from "../assets/images/fiverr-gig-image.png";
 
 const WebDevLandingPage = () => {
   const handleWhatsAppClick = () => {
@@ -99,11 +100,17 @@ const WebDevLandingPage = () => {
                 <br />
                 Mehedi
               </p>
+
+              <p className="bg-yellow-100"><span className="text-red-600">Note:</span> Please don't make any conversation on Fiverr inbox about this. It's against their policy and could disable my Fiverr account.</p>
             </div>
           </div>
           <div className="col-span-1 border rounded-lg p-2">
             <img src={fiverrProfile} alt="Fiverr Profile" />
           </div>
+        </div>
+        <div className="border rounded-lg p-4 mt-8">
+            <h1 className="text-2xl font-bold text-center mt-4 text-gray-800 mb-4">Web Development Gig on Fiverr</h1>
+            <img src={fiverrGigImage} alt="Web Development Gig on Fiverr" />
         </div>
       </section>
 
