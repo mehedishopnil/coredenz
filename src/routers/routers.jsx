@@ -8,6 +8,7 @@ import SingleProductPage from "../components/SingleProductPage/SingleProductPage
 import Cart from "../components/Cart/Cart";
 import Development from "../pages/Development/Development";
 import GraphicDesign from "../pages/GraphicDesign/GraphicDesign";
+import WebDevLandingPage from "../components/WebDevLandingPage";
 
 export const router = createBrowserRouter([
   {
@@ -47,6 +48,10 @@ export const router = createBrowserRouter([
         path: "/services/graphic-design",
         element: <GraphicDesign />,
       },
+      {
+        path: "web-dev-landing",
+        element: <WebDevLandingPage />,
+      }
     ],
   },
 ]);
