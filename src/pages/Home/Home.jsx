@@ -30,7 +30,7 @@ const Home = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Banner Section */}
       <section className="w-full h-[350px] md:h-[350px] lg:h-[450px]
-       bg-gradient-to-r from-blue-600 to-indigo-700 text-white mt-12
+       bg-gradient-to-r from-blue-600 to-indigo-700 text-white 
         py-16 px-4">
         <div className="mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Welcome to Our Store</h1>

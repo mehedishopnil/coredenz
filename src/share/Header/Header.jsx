@@ -23,28 +23,70 @@ const Header = () => {
         setMenuOpen(false);
     };
 
+    // State to track if header should be fixed
+    const [isFixed, setIsFixed] = useState(false);
+
+    React.useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 0) {
+                setIsFixed(true);
+            } else {
+                setIsFixed(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     return (
-        <header className="w-full bg-[#03045E]  shadow-md fixed top-0 left-0 z-50">
+        <header className={`w-full bg-[#03045E] shadow-md ${isFixed ? 'fixed top-0 left-0 z-50' : 'relative'} h-[72px] md:h-[80px]`}>
             <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 md:py-4">
                 {/* Logo */}
                 <Link to="/">
-                <div className="flex items-center space-x-2">
-                    <img src={logo} alt="CoreDenz Logo" className="w-32 md:w-52" />
-                    
-                </div>
+                    <div className="flex items-center space-x-2">
+                        <img src={logo} alt="CoreDenz Logo" className="w-32 md:w-52" />
+                    </div>
                 </Link>
 
                 {/* Nav Menu - Desktop */}
                 <nav className="hidden md:flex space-x-8">
-                    {navItems.map((item) => (
-                        <Link
-                            key={item.name}
-                            to={item.href}
-                            className="text-gray-100 hover:text-blue-500 font-medium transition-colors"
-                        >
-                            {item.name}
-                        </Link>
-                    ))}
+                    {navItems.map((item) =>
+                        item.name === 'Services' ? (
+                            <div key={item.name} className="relative group">
+                                <button
+                                    className="text-gray-100 hover:text-blue-500 font-medium transition-colors flex items-center focus:outline-none"
+                                >
+                                    {item.name}
+                                    <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                        <path d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div className="absolute left-0 mt-2 w-44 bg-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-events-none group-hover:pointer-events-auto group-focus-within:pointer-events-auto transition-opacity z-20">
+                                    <Link
+                                        to="/services/development"
+                                        className="block px-4 py-2 text-gray-800 hover:bg-blue-100 hover:text-blue-700 transition-colors"
+                                    >
+                                        Development
+                                    </Link>
+                                    <Link
+                                        to="/services/graphic-design"
+                                        className="block px-4 py-2 text-gray-800 hover:bg-blue-100 hover:text-blue-700 transition-colors"
+                                    >
+                                        Graphic Design
+                                    </Link>
+                                </div>
+                            </div>
+                        ) : (
+                            <Link
+                                key={item.name}
+                                to={item.href}
+                                className="text-gray-100 hover:text-blue-500 font-medium transition-colors"
+                            >
+                                {item.name}
+                            </Link>
+                        )
+                    )}
                 </nav>
 
                 {/* Right Side - Desktop */}

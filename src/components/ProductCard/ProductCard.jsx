@@ -1,5 +1,6 @@
 import { FaStar, FaRegHeart, FaHeart, FaShoppingCart } from 'react-icons/fa';
 import { useState } from 'react';
+import { Link } from 'react-router';
 
 const ProductCard = ({ product }) => {
   const [isWishlisted, setIsWishlisted] = useState(false);
@@ -9,8 +10,9 @@ const ProductCard = ({ product }) => {
   const productImage = product?.images?.[0] || '';
 
   return (
+    <Link>
     <div 
-      className="bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md border border-gray-100 hover:border-gray-200"
+      className="bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-300 p-2 hover:shadow-md border border-gray-100 hover:border-gray-200"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -51,11 +53,7 @@ const ProductCard = ({ product }) => {
         </button>
 
         {/* Quick Add to Cart (Desktop hover effect) */}
-        {isHovered && (
-          <button className="absolute bottom-0 left-0 right-0 bg-blue-600 text-white py-2 font-medium flex items-center justify-center gap-2 transition-all duration-300 hover:bg-blue-700">
-            <FaShoppingCart /> Quick Add
-          </button>
-        )}
+        
       </div>
       
       {/* Product Details */}
@@ -100,6 +98,7 @@ const ProductCard = ({ product }) => {
         </div>
       </div>
     </div>
+    </Link>
   );
 };
 
