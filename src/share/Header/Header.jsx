@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { FaBars, FaTimes, FaFacebook, FaTwitter, FaInstagram, FaPhone, FaReact, FaUser, FaSignOutAlt, FaWhatsapp, FaEnvelope } from 'react-icons/fa';
+import { FaBars, FaTimes, FaFacebook, FaTwitter, FaInstagram, FaPhone, FaReact, FaUser, FaSignOutAlt, FaWhatsapp, FaEnvelope, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { Link } from 'react-router';
 import { AuthContext } from '../../provider/AuthProvider/AuthProvider';
 import logo from '../../assets/images/CoreDenz-logo.png';
@@ -9,19 +9,30 @@ const navItems = [
     { name: 'Home', href: '/' },
     { name: 'Laptops', href: '/laptops' },
     { name: 'About', href: '/about' },
-    { name: 'Services', href: '/services' },
-    { name: 'DevLanding', href: '/web-dev-landing' },
+    { 
+        name: 'Services', 
+        href: '/services',
+        subItems: [
+            { name: 'Development', href: '/services/development' },
+            { name: 'Graphic Design', href: '/services/graphic-design' }
+        ]
+    },
     { name: 'Contact', href: '/contact' },
 ];
 
 const Header = () => {
-    const [menuOpen, setMenuOpen] = useState(false);
+     const [menuOpen, setMenuOpen] = useState(false);
+    const [openSubmenu, setOpenSubmenu] = useState(null);
     const { user, loading } = useContext(AuthContext);
 
     const handleLogout = () => {
         // Implement your logout logic here
         console.log('User logged out');
         setMenuOpen(false);
+    };
+
+    const toggleSubmenu = (index) => {
+        setOpenSubmenu(openSubmenu === index ? null : index);
     };
 
     // State to track if header should be fixed
@@ -43,7 +54,6 @@ const Header = () => {
     return (
         <header className={`w-full bg-[#03045E] shadow-md ${isFixed ? 'fixed top-0 left-0 z-50' : 'relative'} h-[72px] md:h-[80px]`}>
             <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 md:py-4">
-                {/* Logo */}
                 <Link to="/">
                     <div className="flex items-center space-x-2">
                         <img src={logo} alt="CoreDenz Logo" className="w-32 md:w-52" />
@@ -169,16 +179,44 @@ const Header = () => {
                 </div>
                 
                 {/* Menu Content */}
-                <nav className="flex flex-col space-y-4 px-6 pb-4">
-                    {navItems.map((item) => (
-                        <Link
-                            key={item.name}
-                            to={item.href}
-                            className="text-gray-100 hover:text-blue-500 font-medium transition-colors py-2"
-                            onClick={() => setMenuOpen(false)}
-                        >
-                            {item.name}
-                        </Link>
+                {/* Menu Content */}
+                <nav className="flex flex-col px-6 pb-4">
+                    {navItems.map((item, index) => (
+                        <div key={item.name} className="py-2">
+                            {item.subItems ? (
+                                <>
+                                    <button
+                                        className="flex items-center justify-between w-full text-gray-100 hover:text-blue-500 font-medium transition-colors"
+                                        onClick={() => toggleSubmenu(index)}
+                                    >
+                                        <span>{item.name}</span>
+                                        {openSubmenu === index ? <FaChevronUp /> : <FaChevronDown />}
+                                    </button>
+                                    {openSubmenu === index && (
+                                        <div className="ml-4 mt-2 space-y-2">
+                                            {item.subItems.map((subItem) => (
+                                                <Link
+                                                    key={subItem.name}
+                                                    to={subItem.href}
+                                                    className="block py-1 text-gray-300 hover:text-blue-400 transition-colors"
+                                                    onClick={() => setMenuOpen(false)}
+                                                >
+                                                    {subItem.name}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <Link
+                                    to={item.href}
+                                    className="block text-gray-100 hover:text-blue-500 font-medium transition-colors py-2"
+                                    onClick={() => setMenuOpen(false)}
+                                >
+                                    {item.name}
+                                </Link>
+                            )}
+                        </div>
                     ))}
 
                     {/* Mobile Auth Buttons */}
