@@ -21,9 +21,9 @@ const WebDevLandingPage = () => {
         <img
           src={meFiverrProfile}
           alt="Mehedi's Fiverr Profile"
-          className=" rounded-lg mx-auto mb-4"
+          className=" rounded-lg mx-auto mb-4 shadow-lg"
         />
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6 mt-10">
           Let's Work Together Directly
         </h1>
         <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
@@ -108,9 +108,9 @@ const WebDevLandingPage = () => {
             <img src={fiverrProfile} alt="Fiverr Profile" />
           </div>
         </div>
-        <div className="border rounded-lg p-4 mt-8">
-            <h1 className="text-2xl font-bold text-center mt-4 text-gray-800 mb-4">Web Development Gig on Fiverr</h1>
-            <img src={fiverrGigImage} alt="Web Development Gig on Fiverr" />
+        <div className="flex flex-col items-center border rounded-lg p-4 mt-8">
+            <h1 className="text-3xl font-bold text-center text-orange-600 my-4">Web Development Gig on <span className="bg-yellow-100 px-2 rounded">Fiverr</span></h1>
+            <img src={fiverrGigImage} alt=" Web Development Gig on Fiverr" className="md:w-7/12 mt-10"/>
         </div>
       </section>
 
