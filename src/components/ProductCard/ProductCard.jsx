@@ -28,7 +28,7 @@ const ProductCard = ({ product }) => {
 
   return (
     <div
-      className="bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-300 p-2 hover:shadow-md border border-gray-100 hover:border-gray-200"
+      className="relative bg-white h-[500px] rounded-xl shadow-sm overflow-hidden transition-all duration-300 p-2 hover:shadow-md border border-gray-100 hover:border-gray-200"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -118,14 +118,11 @@ const ProductCard = ({ product }) => {
         </div>
       </Link>
 
-      {/* Add to Cart Button - Responsive */}
-      <button
-        className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors duration-300 md:mt-2"
-        onClick={handleAddToCart}
-      >
-        <FaShoppingCart className="text-sm" />
-        <span>Add to Cart</span>
-      </button>
+      <div className="absolute bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100">
+        {/* Add to Cart Button - Responsive */}
+      <Link>
+      </Link>
+      </div>
     </div>
   );
 };
