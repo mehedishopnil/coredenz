@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import app from '../../Firebase/firebase.config';
+import { getAuth } from "firebase/auth";
 
 export const AuthContext = React.createContext();
+
+
 
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [products, setProducts] = useState([]);
     const [error, setError] = useState(null);
+
+    const auth = getAuth(app);
 
     useEffect(() => {
         const fetchProducts = async () => {

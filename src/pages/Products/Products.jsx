@@ -1,13 +1,15 @@
-
+// ...other imports
 import React, { useState, useContext, useEffect } from 'react';
 import ProductCard from '../../components/ProductCard/ProductCard';
-import { FiFilter, FiX, FiChevronDown, FiChevronUp } from 'react-icons/fi';
+import { FiFilter, FiX } from 'react-icons/fi';
+import { AuthContext } from '../../provider/AuthProvider/AuthProvider';
+import { Link } from 'react-router-dom';
 
 const Products = () => {
     const { products, loading } = useContext(AuthContext);
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
     const [filters, setFilters] = useState({
-        brand: '',
+        brand: 'all',
         minPrice: '',
         maxPrice: '',
         sort: 'featured'
@@ -30,7 +32,7 @@ const Products = () => {
             let result = [...products];
 
             // Brand filter
-            if (filters.brand) {
+            if (filters.brand && filters.brand !== 'all') {
                 result = result.filter(product => product.brand === filters.brand);
             }
 
@@ -58,7 +60,7 @@ const Products = () => {
                     break;
                 case 'featured':
                 default:
-                    // Default sorting (could be by ID or any other default)
+                    // Default sorting
                     break;
             }
 
@@ -76,7 +78,7 @@ const Products = () => {
 
     const resetFilters = () => {
         setFilters({
-            brand: '',
+            brand: 'all',
             minPrice: '',
             maxPrice: '',
             sort: 'featured'
@@ -115,6 +117,19 @@ const Products = () => {
                             <div className="mb-6">
                                 <h3 className="font-medium text-gray-900">Brand</h3>
                                 <div className="mt-2 space-y-3">
+                                    <div className="flex items-center">
+                                        <input
+                                            id="mobile-brand-all"
+                                            name="brand"
+                                            type="radio"
+                                            checked={filters.brand === 'all'}
+                                            onChange={() => setFilters({ ...filters, brand: 'all' })}
+                                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                        />
+                                        <label htmlFor="mobile-brand-all" className="ml-3 text-sm text-gray-700">
+                                            All
+                                        </label>
+                                    </div>
                                     {brands.map((brand) => (
                                         <div key={brand} className="flex items-center">
                                             <input
@@ -122,7 +137,7 @@ const Products = () => {
                                                 name="brand"
                                                 type="radio"
                                                 checked={filters.brand === brand}
-                                                onChange={() => setFilters({...filters, brand})}
+                                                onChange={() => setFilters({ ...filters, brand })}
                                                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                             />
                                             <label htmlFor={`mobile-brand-${brand}`} className="ml-3 text-sm text-gray-700">
@@ -220,6 +235,19 @@ const Products = () => {
                             <div className="border-b border-gray-200 py-6">
                                 <h3 className="font-medium text-gray-900">Brand</h3>
                                 <div className="mt-2 space-y-3">
+                                    <div className="flex items-center">
+                                        <input
+                                            id="brand-all"
+                                            name="brand"
+                                            type="radio"
+                                            checked={filters.brand === 'all'}
+                                            onChange={() => setFilters({ ...filters, brand: 'all' })}
+                                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                        />
+                                        <label htmlFor="brand-all" className="ml-3 text-sm text-gray-700">
+                                            All
+                                        </label>
+                                    </div>
                                     {brands.map((brand) => (
                                         <div key={brand} className="flex items-center">
                                             <input
@@ -227,7 +255,7 @@ const Products = () => {
                                                 name="brand"
                                                 type="radio"
                                                 checked={filters.brand === brand}
-                                                onChange={() => setFilters({...filters, brand})}
+                                                onChange={() => setFilters({ ...filters, brand })}
                                                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                             />
                                             <label htmlFor={`brand-${brand}`} className="ml-3 text-sm text-gray-700">
@@ -301,13 +329,13 @@ const Products = () => {
                         <div className="lg:col-span-3">
                             {/* Active filters */}
                             <div className="mb-6 flex flex-wrap items-center gap-2">
-                                {filters.brand && (
+                                {filters.brand && filters.brand !== 'all' && (
                                     <span className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-800">
                                         Brand: {filters.brand}
                                         <button
                                             type="button"
                                             className="ml-1.5 inline-flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full text-gray-600 hover:bg-gray-200 hover:text-gray-900"
-                                            onClick={() => setFilters({...filters, brand: ''})}
+                                            onClick={() => setFilters({ ...filters, brand: 'all' })}
                                         >
                                             <FiX className="h-2 w-2" />
                                         </button>
@@ -319,7 +347,7 @@ const Products = () => {
                                         <button
                                             type="button"
                                             className="ml-1.5 inline-flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full text-gray-600 hover:bg-gray-200 hover:text-gray-900"
-                                            onClick={() => setFilters({...filters, minPrice: '', maxPrice: ''})}
+                                            onClick={() => setFilters({ ...filters, minPrice: '', maxPrice: '' })}
                                         >
                                             <FiX className="h-2 w-2" />
                                         </button>
@@ -340,8 +368,10 @@ const Products = () => {
                             ) : (
                                 <div className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
                                     {filteredProducts.map((product) => (
-                                        <ProductCard key={product.id} product={product} />
-                                    ))}
+                    
+                        <ProductCard key={product.id}  product={product} />
+                   
+                ))}
                                 </div>
                             )}
                         </div>

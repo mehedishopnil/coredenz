@@ -17,7 +17,7 @@ const WebDevLandingPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Hero Section */}
-      <section className="max-w-6xl mx-auto px-4 py-16 md:py-24 text-center">
+      <section className="max-w-6xl mx-auto px-4 py-10 md:py-24 text-center">
         <img
           src={meFiverrProfile}
           alt="Mehedi's Fiverr Profile"

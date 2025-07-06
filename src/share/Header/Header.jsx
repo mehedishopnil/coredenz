@@ -7,7 +7,7 @@ import { FaX } from 'react-icons/fa6';
 
 const navItems = [
     { name: 'Home', href: '/' },
-    { name: 'Laptops', href: '/laptops' },
+    { name: 'Products', href: '/products' },
     { name: 'About', href: '/about' },
     { 
         name: 'Services', 
