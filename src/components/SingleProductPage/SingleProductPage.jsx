@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { FiArrowLeft, FiShoppingCart, FiStar } from "react-icons/fi";
 import PropTypes from "prop-types";
@@ -63,6 +63,9 @@ const SingleProductPage = () => {
     condition = "",
   } = specification;
 
+  // Image Gallery state for main image index
+  const [mainImageIndex, setMainImageIndex] = useState(0);
+
   return (
     <div className="min-h-screen bg-gray-50 pb-12">
       {/* Header with back button */}
@@ -82,21 +85,29 @@ const SingleProductPage = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Product Gallery and Info */}
         <div className="lg:grid lg:grid-cols-2 lg:gap-8">
-          {/* Image Gallery */}
           <div className="mb-8 lg:mb-0">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden mb-4">
+            {/* Main Image */}
+            <div className="bg-white rounded-lg shadow-md overflow-hidden p-4 mb-4 flex items-center justify-center" style={{ width: "600px", height: "500px" }}>
               <img
-                src={images[0]}
+                src={images[mainImageIndex]}
                 alt={name}
-                className="w-full h-auto object-cover"
+                className="w-full h-full object-contain"
+                style={{ width: "100%", height: "100%" }}
                 loading="lazy"
               />
             </div>
+            {/* Thumbnail Images */}
             <div className="grid grid-cols-4 gap-2">
               {images.map((img, index) => (
-                <div
+                <button
                   key={index}
-                  className="bg-white rounded-md shadow-sm overflow-hidden"
+                  type="button"
+                  onClick={() => setMainImageIndex(index)}
+                  className={`bg-white rounded-md shadow-sm overflow-hidden focus:outline-none ring-2 ${
+                    mainImageIndex === index ? "ring-indigo-500" : "ring-transparent"
+                  }`}
+                  tabIndex={0}
+                  aria-label={`Show image ${index + 1}`}
                 >
                   <img
                     src={img}
@@ -104,12 +115,12 @@ const SingleProductPage = () => {
                     className="w-full h-20 object-cover"
                     loading="lazy"
                   />
-                </div>
+                </button>
               ))}
             </div>
           </div>
 
-          {/* Product Info */}
+         
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="mb-6">
               <div className="flex justify-between items-start">
