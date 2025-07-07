@@ -18,10 +18,13 @@ const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [products, setProducts] = useState([]);
 
     const auth = getAuth(app);
     const googleProvider = new GoogleAuthProvider();
     const API_URL = import.meta.env.VITE_API_Link;
+
+    console.log(API_URL)
 
     // Auth state observer
     useEffect(() => {
@@ -149,6 +152,24 @@ const AuthProvider = ({ children }) => {
             .finally(() => setLoading(false));
     };
 
+
+    // Here Fetch the products data
+
+    const fetchProducts = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/products`);
+            setProducts(response.data);
+        } catch (err) {
+            console.error("Error fetching products:", err);
+        }
+    };
+
+    // Fetch products when the component mounts
+    useEffect(() => {
+        fetchProducts();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [API_URL]);
+
     const authInfo = {
         user,
         loading,
@@ -156,7 +177,8 @@ const AuthProvider = ({ children }) => {
         signUp,
         signIn,
         signInWithGoogle,
-        logOut
+        logOut,
+        products
     };
 
     return (
