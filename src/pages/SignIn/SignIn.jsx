@@ -1,18 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import Swal from 'sweetalert2';
+import { AuthContext } from '../../provider/AuthProvider/AuthProvider';
 
 const SignIn = () => {
     const [form, setForm] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const { signIn, signInWithGoogle } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
         setError('');
+    };
+
+    const showSuccessAlert = () => {
+        Swal.fire({
+            title: 'Success!',
+            text: 'You have successfully signed in!',
+            icon: 'success',
+            confirmButtonText: 'Continue',
+            confirmButtonColor: '#4f46e5', // indigo-600
+            background: '#1f2937', // gray-800
+            color: 'white'
+        });
+    };
+
+    const showErrorAlert = (message) => {
+        Swal.fire({
+            title: 'Error!',
+            text: message,
+            icon: 'error',
+            confirmButtonText: 'Try Again',
+            confirmButtonColor: '#dc2626', // red-600
+            background: '#1f2937', // gray-800
+            color: 'white'
+        });
     };
 
     const handleSubmit = async (e) => {
@@ -23,23 +51,33 @@ const SignIn = () => {
         if (!form.email || !form.password) {
             setError('Please fill in all fields.');
             setLoading(false);
+            showErrorAlert('Please fill in all fields.');
             return;
         }
 
-        // Simulate API call
-        setTimeout(() => {
-            if (form.email === 'user@example.com' && form.password === 'password123') {
-                alert('Signed in successfully!');
-            } else {
-                setError('Invalid email or password.');
-            }
+        try {
+            await signIn(form.email, form.password);
+            showSuccessAlert();
+            navigate('/'); // Redirect after successful login
+        } catch (err) {
+            const errorMessage = err.message || 'Invalid email or password.';
+            setError(errorMessage);
+            showErrorAlert(errorMessage);
+        } finally {
             setLoading(false);
-        }, 1000);
+        }
     };
 
-    const handleGoogleLogin = () => {
-        // Implement Google login logic here
-        alert('Google login would be implemented here');
+    const handleGoogleLogin = async () => {
+        try {
+            await signInWithGoogle();
+            showSuccessAlert();
+            navigate('/');
+        } catch (err) {
+            const errorMessage = err.message || 'Failed to sign in with Google';
+            setError(errorMessage);
+            showErrorAlert(errorMessage);
+        }
     };
 
     return (
@@ -171,7 +209,7 @@ const SignIn = () => {
 
                         <div className="text-center mt-8 text-sm text-gray-400">
                             Don't have an account?{' '}
-                            <Link to="/register" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+                            <Link to="/sign-up" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
                                 Create one
                             </Link>
                         </div>

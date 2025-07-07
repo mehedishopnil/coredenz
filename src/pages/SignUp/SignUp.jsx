@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiPhone } from 'react-icons/fi';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import Swal from 'sweetalert2';
+import { AuthContext } from '../../provider/AuthProvider/AuthProvider';
 
 const SignUp = () => {
     const [form, setForm] = useState({
@@ -14,8 +16,36 @@ const SignUp = () => {
     });
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
+    const [googleLoading, setGoogleLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    
+    const { signUp, signInWithGoogle } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    const showSuccessAlert = (message) => {
+        Swal.fire({
+            title: 'Success!',
+            text: message,
+            icon: 'success',
+            confirmButtonText: 'Continue',
+            confirmButtonColor: '#4f46e5',
+            background: '#1f2937',
+            color: 'white'
+        });
+    };
+
+    const showErrorAlert = (message) => {
+        Swal.fire({
+            title: 'Error!',
+            text: message,
+            icon: 'error',
+            confirmButtonText: 'Try Again',
+            confirmButtonColor: '#dc2626',
+            background: '#1f2937',
+            color: 'white'
+        });
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -57,25 +87,39 @@ const SignUp = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        if (validateForm()) {
-            setTimeout(() => {
-                alert('Account created successfully!');
-                setLoading(false);
-                setForm({
-                    name: '',
-                    email: '',
-                    password: '',
-                    confirmPassword: '',
-                    phone: ''
-                });
-            }, 1500);
-        } else {
+        
+        if (!validateForm()) {
+            setLoading(false);
+            return;
+        }
+
+        try {
+            await signUp({
+                displayName: form.name,
+                email: form.email,
+                password: form.password,
+                phoneNumber: form.phone
+            });
+            showSuccessAlert('Account created successfully!');
+            navigate('/');
+        } catch (err) {
+            showErrorAlert(err.message || 'Failed to create account');
+        } finally {
             setLoading(false);
         }
     };
 
-    const handleGoogleLogin = () => {
-        alert('Google sign up would be implemented here');
+    const handleGoogleSignUp = async () => {
+        setGoogleLoading(true);
+        try {
+            await signInWithGoogle();
+            showSuccessAlert('Signed up with Google successfully!');
+            navigate('/');
+        } catch (err) {
+            showErrorAlert(err.message || 'Failed to sign up with Google');
+        } finally {
+            setGoogleLoading(false);
+        }
     };
 
     return (
@@ -93,20 +137,35 @@ const SignUp = () => {
                             <h2 className="text-2xl sm:text-3xl font-bold text-gray-500">Create Account</h2>
                             <p className="text-gray-500 mt-1 sm:mt-2 text-sm sm:text-base">Join us to get started</p>
                         </div>
+                        
+                        {/* Google Sign Up Button */}
                         <motion.button 
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            onClick={handleGoogleLogin}
-                            className="w-full flex items-center justify-center gap-3 px-4 py-2 sm:px-6 sm:py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-all text-white mb-4 sm:mb-6 border border-gray-600 text-sm sm:text-base"
+                            onClick={handleGoogleSignUp}
+                            disabled={googleLoading}
+                            className={`w-full flex items-center justify-center gap-3 px-4 py-2 sm:px-6 sm:py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-all text-white mb-4 sm:mb-6 border border-gray-600 text-sm sm:text-base ${googleLoading ? 'opacity-80 cursor-not-allowed' : ''}`}
                         >
-                            <FcGoogle className="text-lg sm:text-xl" />
-                            <span>Sign up with Google</span>
+                            {googleLoading ? (
+                                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            ) : (
+                                <>
+                                    <FcGoogle className="text-lg sm:text-xl" />
+                                    <span>Sign up with Google</span>
+                                </>
+                            )}
                         </motion.button>
+
                         <div className="relative flex items-center my-4 sm:my-6">
                             <div className="flex-grow border-t border-gray-700"></div>
                             <span className="flex-shrink mx-2 sm:mx-4 text-gray-500 text-xs sm:text-sm">OR</span>
                             <div className="flex-grow border-t border-gray-700"></div>
                         </div>
+
+                        {/* Manual Sign Up Form */}
                         <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
                             <div>
                                 <label htmlFor="name" className="block text-xs sm:text-sm font-medium text-gray-400 mb-1 sm:mb-2">
@@ -129,6 +188,7 @@ const SignUp = () => {
                                 </div>
                                 {errors.name && <p className="mt-1 text-xs sm:text-sm text-red-400">{errors.name}</p>}
                             </div>
+
                             <div>
                                 <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-gray-400 mb-1 sm:mb-2">
                                     Email Address
@@ -150,6 +210,7 @@ const SignUp = () => {
                                 </div>
                                 {errors.email && <p className="mt-1 text-xs sm:text-sm text-red-400">{errors.email}</p>}
                             </div>
+
                             <div>
                                 <label htmlFor="phone" className="block text-xs sm:text-sm font-medium text-gray-400 mb-1 sm:mb-2">
                                     Phone Number (Optional)
@@ -170,6 +231,7 @@ const SignUp = () => {
                                 </div>
                                 {errors.phone && <p className="mt-1 text-xs sm:text-sm text-red-400">{errors.phone}</p>}
                             </div>
+
                             <div>
                                 <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-gray-400 mb-1 sm:mb-2">
                                     Password
@@ -203,6 +265,7 @@ const SignUp = () => {
                                 {errors.password && <p className="mt-1 text-xs sm:text-sm text-red-400">{errors.password}</p>}
                                 <p className="mt-1 text-xs text-gray-500">Minimum 8 characters</p>
                             </div>
+
                             <div>
                                 <label htmlFor="confirmPassword" className="block text-xs sm:text-sm font-medium text-gray-400 mb-1 sm:mb-2">
                                     Confirm Password
@@ -235,6 +298,7 @@ const SignUp = () => {
                                 </div>
                                 {errors.confirmPassword && <p className="mt-1 text-xs sm:text-sm text-red-400">{errors.confirmPassword}</p>}
                             </div>
+
                             <div className="flex items-center">
                                 <input
                                     id="terms"
@@ -247,6 +311,7 @@ const SignUp = () => {
                                     I agree to the <Link to="/terms" className="text-blue-400 hover:text-blue-300">Terms</Link> and <Link to="/privacy" className="text-blue-400 hover:text-blue-300">Privacy Policy</Link>
                                 </label>
                             </div>
+
                             <motion.button
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
@@ -265,6 +330,7 @@ const SignUp = () => {
                                 ) : 'Sign Up'}
                             </motion.button>
                         </form>
+
                         <div className="text-center mt-4 sm:mt-6 text-xs sm:text-sm text-gray-400">
                             Already have an account?{' '}
                             <Link to="/login" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
