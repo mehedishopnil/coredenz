@@ -1,94 +1,287 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../provider/AuthProvider/AuthProvider';
-import { FaPlus, FaMinus, FaTrash, FaCheckCircle } from 'react-icons/fa';
+import { FaPlus, FaMinus, FaTrash, FaArrowRight, FaShoppingBag } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import Loading from '../Loading/Loading';
+
 
 const Cart = () => {
-    const { cart, removeFromCart, addToCart } = useContext(AuthContext);
-    console.log(cart)
+    const { cart, removeFromCart, addToCart, products } = useContext(AuthContext);
+    const [cartProducts, setCartProducts] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isProcessing, setIsProcessing] = useState(false);
 
-    const handleIncrease = (productId) => {
-        addToCart(productId, 1); // add 1 more
-    };
+    // Match cart items with products data
+    useEffect(() => {
+        const matchProductsToCart = () => {
+            setIsLoading(true);
+            
+            // Only proceed if we have both cart and products data
+            if (cart && products && products.length > 0) {
+                const matchedItems = cart.map(cartItem => {
+                    // Find the product that matches the cart item's productId
+                    const matchedProduct = products.find(
+                        product => product._id === cartItem.productId
+                    );
 
-    const handleDecrease = (item) => {
-        if (item.quantity > 1) {
-            // Create manual decrease
-            const updatedItem = { ...item, quantity: -1 };
-            addToCart(item.productId, -1);
-        } else {
-            removeFromCart(item._id);
+                    // If product found, merge with cart item, otherwise mark as unavailable
+                    return matchedProduct 
+                        ? { 
+                            ...cartItem, 
+                            productDetails: {
+                                ...matchedProduct,
+                                image: matchedProduct.images?.[0] || 'https://via.placeholder.com/150'
+                            }
+                        }
+                        : {
+                            ...cartItem,
+                            productDetails: {
+                                name: 'Product unavailable',
+                                price: 0,
+                                image: 'https://via.placeholder.com/150',
+                                specification: {}
+                            }
+                        };
+                });
+
+                setCartProducts(matchedItems);
+            }
+            
+            setIsLoading(false);
+        };
+
+        matchProductsToCart();
+    }, [cart, products]);
+
+    const handleQuantityChange = async (productId, change) => {
+        setIsProcessing(true);
+        try {
+            await addToCart(productId, change);
+        } catch (error) {
+            console.error("Error updating cart:", error);
+        } finally {
+            setIsProcessing(false);
         }
     };
 
-    const totalAmount = cart.reduce(
-        (total, item) => total + (item.productDetails?.price || 0) * item.quantity,
+    const handleRemoveItem = async (cartItemId) => {
+        setIsProcessing(true);
+        try {
+            await removeFromCart(cartItemId);
+        } catch (error) {
+            console.error("Error removing item:", error);
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    // Calculate totals
+    const subtotal = cartProducts.reduce(
+        (total, item) => total + (item.productDetails.price * item.quantity),
         0
     );
+    const shippingFee = subtotal > 0 ? 50 : 0;
+    const total = subtotal + shippingFee;
+
+    // Loading state
+    if (isLoading) {
+        return (
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <Loading message="Loading your cart..." />
+            </div>
+        );
+    }
+
+    // Empty cart state
+    if (cartProducts.length === 0 && !isLoading) {
+        return (
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div className="text-center py-12">
+                   <Loading />
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="max-w-5xl mx-auto px-4 py-8">
-            <h2 className="text-3xl font-semibold mb-6">Your Cart</h2>
-
-            {cart.length === 0 ? (
-                <p className="text-gray-600 text-center">Your cart is empty.</p>
-            ) : (
-                <div className="space-y-6">
-                    {cart.map((item) => (
-                        <div
-                            key={item._id}
-                            className="flex flex-col md:flex-row items-center justify-between bg-white shadow-md p-4 rounded-lg"
-                        >
-                            <div className="flex items-center space-x-4 w-full md:w-2/3">
-                                <img
-                                    src={item.productDetails?.image || 'https://via.placeholder.com/100'}
-                                    alt={item.productDetails?.name}
-                                    className="w-20 h-20 object-cover rounded"
-                                />
-                                <div>
-                                    <h3 className="text-lg font-medium">{item.productDetails?.name}</h3>
-                                    <p className="text-gray-500">৳ {item.productDetails?.price}</p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">Your Shopping Cart</h1>
+            
+            <div className="lg:grid lg:grid-cols-12 lg:gap-8">
+                {/* Cart Items - Mobile */}
+                <div className="lg:hidden space-y-4 mb-8">
+                    {cartProducts.map((item) => (
+                        <div key={item._id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                            <div className="flex space-x-4">
+                                <div className="flex-shrink-0 w-20 h-20">
+                                    <img
+                                        src={item.productDetails.image}
+                                        alt={item.productDetails.name}
+                                        className="w-full h-full object-cover rounded-md"
+                                    />
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="font-medium text-gray-900">{item.productDetails.name}</h3>
+                                    {item.productDetails.specification?.color && (
+                                        <p className="text-sm text-gray-500 mt-1">
+                                            Color: {item.productDetails.specification.color}
+                                        </p>
+                                    )}
+                                    <p className="text-lg font-semibold mt-2">${item.productDetails.price.toFixed(2)}</p>
                                 </div>
                             </div>
 
-                            <div className="flex items-center space-x-3 mt-4 md:mt-0">
+                            <div className="flex items-center justify-between mt-4">
+                                <div className="flex items-center border border-gray-300 rounded-md">
+                                    <button
+                                        onClick={() => handleQuantityChange(item.productId, -1)}
+                                        disabled={isProcessing || item.productDetails.name === 'Product unavailable'}
+                                        className="px-3 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                                    >
+                                        <FaMinus className="w-3 h-3" />
+                                    </button>
+                                    <span className="px-3 py-1 text-gray-900">
+                                        {item.quantity}
+                                    </span>
+                                    <button
+                                        onClick={() => handleQuantityChange(item.productId, 1)}
+                                        disabled={isProcessing || item.productDetails.name === 'Product unavailable'}
+                                        className="px-3 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                                    >
+                                        <FaPlus className="w-3 h-3" />
+                                    </button>
+                                </div>
+
                                 <button
-                                    onClick={() => handleDecrease(item)}
-                                    className="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded"
+                                    onClick={() => handleRemoveItem(item._id)}
+                                    disabled={isProcessing}
+                                    className="text-red-500 hover:text-red-700 ml-4"
                                 >
-                                    <FaMinus />
+                                    <FaTrash className="w-5 h-5" />
                                 </button>
-                                <span className="text-lg font-semibold">{item.quantity}</span>
-                                <button
-                                    onClick={() => handleIncrease(item.productId)}
-                                    className="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded"
-                                >
-                                    <FaPlus />
-                                </button>
-                                <button
-                                    onClick={() => removeFromCart(item._id)}
-                                    className="text-red-500 hover:text-red-700 ml-3"
-                                >
-                                    <FaTrash />
-                                </button>
+                            </div>
+
+                            <div className="mt-3 text-right font-medium">
+                                Total: ${(item.productDetails.price * item.quantity).toFixed(2)}
                             </div>
                         </div>
                     ))}
+                </div>
 
-                    {/* Checkout Section */}
-                    <div className="text-right mt-8 border-t pt-6">
-                        <h4 className="text-xl font-semibold mb-4">
-                            Total: <span className="text-blue-600">৳ {totalAmount}</span>
-                        </h4>
-                        <Link
-                            to="/checkout"
-                            className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                        >
-                            <FaCheckCircle className="mr-2" /> Proceed to Checkout
-                        </Link>
+                {/* Cart Items - Desktop */}
+                <div className="hidden lg:block lg:col-span-8">
+                    <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+                        <div className="grid grid-cols-12 bg-gray-50 px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider">
+                            <div className="col-span-5">Product</div>
+                            <div className="col-span-2 text-center">Price</div>
+                            <div className="col-span-3 text-center">Quantity</div>
+                            <div className="col-span-2 text-right">Total</div>
+                        </div>
+
+                        <div className="divide-y divide-gray-200">
+                            {cartProducts.map((item) => (
+                                <div key={item._id} className="grid grid-cols-12 px-6 py-4 items-center">
+                                    <div className="col-span-5 flex items-center space-x-4">
+                                        <div className="flex-shrink-0 w-16 h-16">
+                                            <img
+                                                src={item.productDetails.image}
+                                                alt={item.productDetails.name}
+                                                className="w-full h-full object-cover rounded"
+                                            />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-base font-medium text-gray-900">
+                                                {item.productDetails.name}
+                                            </h3>
+                                            {item.productDetails.specification?.color && (
+                                                <p className="text-sm text-gray-500 mt-1">
+                                                    Color: {item.productDetails.specification.color}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="col-span-2 text-center text-gray-900">
+                                        ${item.productDetails.price.toFixed(2)}
+                                    </div>
+
+                                    <div className="col-span-3 flex justify-center">
+                                        <div className="flex items-center border border-gray-300 rounded-md">
+                                            <button
+                                                onClick={() => handleQuantityChange(item.productId, -1)}
+                                                disabled={isProcessing || item.productDetails.name === 'Product unavailable'}
+                                                className="px-3 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                                            >
+                                                <FaMinus className="w-3 h-3" />
+                                            </button>
+                                            <span className="px-3 py-1 text-gray-900">
+                                                {item.quantity}
+                                            </span>
+                                            <button
+                                                onClick={() => handleQuantityChange(item.productId, 1)}
+                                                disabled={isProcessing || item.productDetails.name === 'Product unavailable'}
+                                                className="px-3 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                                            >
+                                                <FaPlus className="w-3 h-3" />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="col-span-2 flex items-center justify-end space-x-4">
+                                        <span className="font-medium">
+                                            ${(item.productDetails.price * item.quantity).toFixed(2)}
+                                        </span>
+                                        <button
+                                            onClick={() => handleRemoveItem(item._id)}
+                                            disabled={isProcessing}
+                                            className="text-gray-400 hover:text-red-500"
+                                        >
+                                            <FaTrash className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
-            )}
+
+                {/* Order Summary */}
+                <div className="lg:col-span-4 mt-6 lg:mt-0">
+                    <div className="bg-white shadow-sm rounded-lg p-6 sticky top-4">
+                        <h2 className="text-lg font-medium text-gray-900 mb-6">Order Summary</h2>
+
+                        <div className="space-y-4">
+                            <div className="flex justify-between">
+                                <span className="text-gray-600">Subtotal ({cartProducts.reduce((acc, item) => acc + item.quantity, 0)} items)</span>
+                                <span className="font-medium">${subtotal.toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-gray-600">Shipping</span>
+                                <span className="font-medium">${shippingFee.toFixed(2)}</span>
+                            </div>
+                            <div className="border-t border-gray-200 pt-4 flex justify-between">
+                                <span className="text-lg font-medium">Total</span>
+                                <span className="text-lg font-bold">${total.toFixed(2)}</span>
+                            </div>
+                        </div>
+
+                        <div className="mt-6">
+                            <Link
+                                to="/checkout"
+                                className="w-full flex justify-between items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
+                                disabled={isProcessing || cartProducts.some(item => item.productDetails.name === 'Product unavailable')}
+                            >
+                                <span>Proceed to Checkout</span>
+                                <FaArrowRight className="ml-2" />
+                            </Link>
+                        </div>
+
+                        <div className="mt-4 text-center text-sm text-gray-500">
+                            <p>or <Link to="/products" className="text-indigo-600 hover:text-indigo-500">continue shopping</Link></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

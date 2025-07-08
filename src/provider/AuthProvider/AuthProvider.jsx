@@ -228,8 +228,8 @@ const AuthProvider = ({ children }) => {
   const fetchCart = useCallback(async () => {
     if (!user) return;
 
-    try {
-      const response = await axios.get(`${API_URL}/cart/${user.uid}`);
+    try { 
+      const response = await axios.get(`${API_URL}/cart/${user.email}`);
       setCart(response.data);
     } catch (error) {
       console.error("Error fetching cart:", error);
