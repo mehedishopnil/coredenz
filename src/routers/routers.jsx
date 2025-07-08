@@ -9,6 +9,7 @@ import Cart from "../components/Cart/Cart";
 import Development from "../pages/Development/Development";
 import GraphicDesign from "../pages/GraphicDesign/GraphicDesign";
 import WebDevLandingPage from "../components/WebDevLandingPage";
+import Checkout from "../components/Checkout/Checkout";
 
 export const router = createBrowserRouter([
   {
@@ -52,6 +53,10 @@ export const router = createBrowserRouter([
       {
         path: "web-dev-landing",
         element: <WebDevLandingPage />,
+      },
+      {
+        path: "checkout",
+        element: <Checkout />,
       }
     ],
   },
