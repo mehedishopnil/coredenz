@@ -235,16 +235,49 @@ const AuthProvider = ({ children }) => {
     }
   }, [API_URL, user]);
 
-  // Remove item from cart
-  const removeFromCart = async (cartItemId) => {
+  // Update cart item quantity
+  const updateCartItemQuantity = async (cartItemId, quantity) => {
+    if (!user) throw new Error("You must be logged in to update cart");
+
     try {
-      await axios.delete(`${API_URL}/cart/${cartItemId}`);
-      setCart((prev) => prev.filter((item) => item._id !== cartItemId));
+      const response = await axios.put(`${API_URL}/cart/${cartItemId}`, {
+        quantity,
+      });
+      setCart((prev) =>
+        prev.map((item) =>
+          item._id === cartItemId ? { ...item, quantity } : item
+        )
+      );
+      return response.data;
     } catch (error) {
-      console.error("Error removing from cart:", error);
+      console.error("Error updating cart item:", error);
       throw error;
     }
   };
+
+
+
+  // Remove item from cart
+  const removeFromCart = async (cartItemId) => {
+  if (!cartItemId) {
+    console.warn("Invalid cartItemId passed to removeFromCart");
+    return;
+  }
+
+  try {
+    // Send delete request to backend
+    await axios.delete(`${API_URL}/cart/${cartItemId}`);
+
+    // Optimistically update UI
+    setCart((prev) => prev.filter((item) => item._id !== cartItemId));
+
+    // Optional: Show user notification
+    // toast.success("Item removed from cart");
+  } catch (error) {
+    console.error("Error removing from cart:", error);
+    // toast.error("Failed to remove item. Try again.");
+  }
+};
 
   // Fetch products when the component mounts
   useEffect(() => {
@@ -268,8 +301,10 @@ const AuthProvider = ({ children }) => {
     logOut,
     products,
     cart,
+    setCart,
     addToCart,
     removeFromCart,
+    updateCartItemQuantity,
     fetchCart,
     clearError: () => setError(null),
   };
