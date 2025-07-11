@@ -235,26 +235,47 @@ const AuthProvider = ({ children }) => {
     }
   }, [API_URL, user]);
 
-  // Update cart item quantity
-  const updateCartItemQuantity = async (cartItemId, quantity) => {
-    if (!user) throw new Error("You must be logged in to update cart");
 
-    try {
-      const response = await axios.put(`${API_URL}/cart/${cartItemId}`, {
-        quantity,
-      });
-      setCart((prev) =>
-        prev.map((item) =>
-          item._id === cartItemId ? { ...item, quantity } : item
-        )
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Error updating cart item:", error);
-      throw error;
+
+
+// Update cart item quantity
+const updateCartItemQuantity = async (productId, newQuantity) => {
+  if (!user || !user.email) {
+    throw new Error("You must be logged in to update your cart");
+  }
+  
+  if (newQuantity < 1) {
+    throw new Error("Quantity must be at least 1");
+  }
+
+  try {
+    // Find the current item for potential rollback
+    const currentItem = cart.find(item => item.productId === productId);
+    if (!currentItem) {
+      throw new Error("Item not found in cart");
     }
-  };
 
+    // Optimistic UI update
+    setCart(prev =>
+      prev.map(item =>
+        item.productId === productId ? { ...item, quantity: newQuantity } : item
+      )
+    );
+
+    // Update backend using PATCH - note the numeric productId
+    const response = await axios.patch(`${API_URL}/cart/${productId}`, {
+      quantity: newQuantity,
+      userEmail: user.email
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update quantity:", error);
+    // Re-fetch cart to ensure sync with server
+    await fetchCart();
+    throw error;
+  }
+};
 
 
   // Remove item from cart
