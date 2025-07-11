@@ -12,10 +12,6 @@ const ProductCard = ({ product }) => {
   const { user, addToCart } = useContext(AuthContext);
   
 
-
-
-
-
   // Get the first image from the images array
   const productImage = product?.images?.[0] || "";
   const discount = product?.discount || 0;

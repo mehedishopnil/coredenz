@@ -4,7 +4,6 @@ import { FaPlus, FaMinus, FaTrash, FaArrowRight, FaShoppingBag } from 'react-ico
 import { Link } from 'react-router-dom';
 import Loading from '../Loading/Loading';
 
-
 const Cart = () => {
     const { cart, removeFromCart, addToCart, products } = useContext(AuthContext);
     const [cartProducts, setCartProducts] = useState([]);
@@ -13,50 +12,55 @@ const Cart = () => {
 
     // Match cart items with products data
     useEffect(() => {
-        const matchProductsToCart = () => {
+        const fetchCartProducts = () => {
             setIsLoading(true);
-            
-            // Only proceed if we have both cart and products data
-            if (cart && products && products.length > 0) {
-                const matchedItems = cart.map(cartItem => {
-                    // Find the product that matches the cart item's productId
-                    const matchedProduct = products.find(
-                        product => product._id === cartItem.productId
-                    );
-
-                    // If product found, merge with cart item, otherwise mark as unavailable
-                    return matchedProduct 
-                        ? { 
-                            ...cartItem, 
+            try {
+                const matchedItems = cart.map(item => {
+                    const matchedProduct = products.find(p => p.id === item.productId);
+                    
+                    if (matchedProduct) {
+                        // Get the first image from the images array or use placeholder
+                        const productImage = matchedProduct.images?.[0] || 'https://via.placeholder.com/150';
+                        
+                        return {
+                            ...item,
                             productDetails: {
                                 ...matchedProduct,
-                                image: matchedProduct.images?.[0] || 'https://via.placeholder.com/150'
-                            }
-                        }
-                        : {
-                            ...cartItem,
-                            productDetails: {
-                                name: 'Product unavailable',
-                                price: 0,
-                                image: 'https://via.placeholder.com/150',
-                                specification: {}
+                                image: productImage // Use the extracted image
                             }
                         };
+                    }
+                    return {
+                        ...item,
+                        productDetails: {
+                            name: 'Product unavailable',
+                            price: 0,
+                            image: 'https://via.placeholder.com/150',
+                            specification: {}
+                        }
+                    };
                 });
 
                 setCartProducts(matchedItems);
+            } catch (error) {
+                console.error('Error fetching cart products:', error);
+            } finally {
+                setIsLoading(false);
             }
-            
-            setIsLoading(false);
         };
 
-        matchProductsToCart();
+        if (products.length && cart.length) {
+            fetchCartProducts();
+        } else {
+            setCartProducts([]);
+            setIsLoading(false);
+        }
     }, [cart, products]);
 
-    const handleQuantityChange = async (productId, change) => {
+    const handleQuantityChange = async (productId, delta) => {
         setIsProcessing(true);
         try {
-            await addToCart(productId, change);
+            await addToCart(productId, delta);
         } catch (error) {
             console.error("Error updating cart:", error);
         } finally {
@@ -64,10 +68,10 @@ const Cart = () => {
         }
     };
 
-    const handleRemoveItem = async (cartItemId) => {
+    const handleRemoveItem = async (productId) => {
         setIsProcessing(true);
         try {
-            await removeFromCart(cartItemId);
+            await removeFromCart(productId);
         } catch (error) {
             console.error("Error removing item:", error);
         } finally {
@@ -80,10 +84,9 @@ const Cart = () => {
         (total, item) => total + (item.productDetails.price * item.quantity),
         0
     );
-    const shippingFee = subtotal > 0 ? 50 : 0;
+    const shippingFee = subtotal > 100 ? 0 : 10;
     const total = subtotal + shippingFee;
 
-    // Loading state
     if (isLoading) {
         return (
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -92,12 +95,21 @@ const Cart = () => {
         );
     }
 
-    // Empty cart state
     if (cartProducts.length === 0 && !isLoading) {
         return (
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="text-center py-12">
-                   <Loading />
+                    <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                        <FaShoppingBag className="w-12 h-12 text-gray-400" />
+                    </div>
+                    <h2 className="text-xl font-medium text-gray-900 mb-2">Your cart is empty</h2>
+                    <p className="text-gray-500 mb-6">Start shopping to add items to your cart</p>
+                    <Link
+                        to="/products"
+                        className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
+                    >
+                        Browse Products
+                    </Link>
                 </div>
             </div>
         );

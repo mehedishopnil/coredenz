@@ -25,8 +25,6 @@ const AuthProvider = ({ children }) => {
   const googleProvider = new GoogleAuthProvider();
   const API_URL = import.meta.env.VITE_API_Link;
 
-  console.log(cart);
-  console.log(products)
 
   // Create user in our backend - memoized with useCallback
   const createBackendUser = useCallback(
