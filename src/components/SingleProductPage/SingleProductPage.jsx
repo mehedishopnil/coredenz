@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { FiArrowLeft, FiShoppingCart, FiStar } from "react-icons/fi";
 import PropTypes from "prop-types";
 import { AuthContext } from "../../provider/AuthProvider/AuthProvider";
+import AddToCart from "../AddToCart/AddToCart";
 
 const SingleProductPage = () => {
   const { products } = useContext(AuthContext);
@@ -14,6 +15,9 @@ const SingleProductPage = () => {
 
   // Image Gallery state for main image index
   const [mainImageIndex, setMainImageIndex] = useState(0);
+
+
+  
 
   if (!product) {
     return (
@@ -206,10 +210,7 @@ const SingleProductPage = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-lg font-medium flex items-center justify-center transition-colors duration-200">
-                <FiShoppingCart className="mr-2" />
-                Add to Cart
-              </button>
+              <AddToCart product={product} />
               <button className="flex-1 border border-indigo-600 text-indigo-600 hover:bg-indigo-50 py-3 px-6 rounded-lg font-medium transition-colors duration-200">
                 Buy Now
               </button>
@@ -279,20 +280,5 @@ const SingleProductPage = () => {
   );
 };
 
-SingleProductPage.propTypes = {
-  state: PropTypes.shape({
-    product: PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-      name: PropTypes.string.isRequired,
-      brand: PropTypes.string.isRequired,
-      category: PropTypes.string.isRequired,
-      images: PropTypes.arrayOf(PropTypes.string),
-      specification: PropTypes.object,
-      description: PropTypes.string,
-      availability: PropTypes.bool,
-      price: PropTypes.number.isRequired,
-    }),
-  }),
-};
 
 export default SingleProductPage;

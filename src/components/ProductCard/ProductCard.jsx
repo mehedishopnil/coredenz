@@ -3,6 +3,7 @@ import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../provider/AuthProvider/AuthProvider";
 import { toast } from "react-toastify";
+import AddToCart from "../AddToCart/AddToCart";
 
 const ProductCard = ({ product }) => {
   const [isWishlisted, setIsWishlisted] = useState(false);
@@ -25,46 +26,6 @@ const ProductCard = ({ product }) => {
     e.stopPropagation();
     setIsWishlisted(!isWishlisted);
   };
-
-  const handleAddToCart = async (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-
-  if (user?.email) {
-    // Registered user - send to backend
-    if (typeof addToCart === "function") {
-      try {
-        await addToCart(product.id, 1); // ✅ updated to match the context function
-        setIsAddedToCart(true);
-        toast.success('Added to cart!');
-      } catch (err) {
-        toast.error('Failed to add to cart');
-      }
-    } else {
-      toast.error('Add to cart function is not available.');
-    }
-  } else {
-    // Guest user - store in localStorage
-    const guestCart = JSON.parse(localStorage.getItem('guestCart') || '[]');
-
-    const existingIndex = guestCart.findIndex(item => item.id === product.id);
-
-    if (existingIndex >= 0) {
-      guestCart[existingIndex].quantity += 1;
-    } else {
-      guestCart.push({
-        id: product.id,
-        name: product.name,
-        price: hasDiscount ? discountedPrice : product.price,
-        image: productImage,
-        quantity: 1
-      });
-    }
-
-    localStorage.setItem('guestCart', JSON.stringify(guestCart));
-    toast.success('Added to cart!');
-  }
-};
 
   
 
@@ -160,13 +121,7 @@ const ProductCard = ({ product }) => {
 
       {/* Add to Cart Button - Always at bottom, fits card */}
       <div className="px-3 pb-3 pt-0">
-        <button
-          className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors duration-300 shadow"
-          onClick={handleAddToCart}
-        >
-          <FaShoppingCart className="text-sm" />
-          <span>Add to Cart</span>
-        </button>
+        <AddToCart product={product} />
       </div>
     </div>
   );
