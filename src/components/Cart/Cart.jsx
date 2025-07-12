@@ -19,136 +19,138 @@ const Cart = () => {
 
   // Match cart items with products data
   useEffect(() => {
-  const fetchCartProducts = () => {
-    setIsLoading(true);
-    try {
-      const matchedItems = cart.map((item) => {
-        const matchedProduct = products.find((p) => p.id === item.productId);
-        
-        // Preserve existing productDetails if available
-        const existingItem = cartProducts.find(ci => ci.productId === item.productId);
-        const existingDetails = existingItem?.productDetails || {};
+    const fetchCartProducts = () => {
+      setIsLoading(true);
+      try {
+        const matchedItems = cart.map((item) => {
+          const matchedProduct = products.find((p) => p.id === item.productId);
 
-        if (matchedProduct) {
+          // Preserve existing productDetails if available
+          const existingItem = cartProducts.find(
+            (ci) => ci.productId === item.productId
+          );
+          const existingDetails = existingItem?.productDetails || {};
+
+          if (matchedProduct) {
+            return {
+              ...item,
+              productDetails: {
+                ...existingDetails,
+                ...matchedProduct,
+                image:
+                  matchedProduct.images?.[0] ||
+                  existingDetails.image ||
+                  "https://via.placeholder.com/150",
+              },
+            };
+          }
           return {
             ...item,
-            productDetails: {
-              ...existingDetails,
-              ...matchedProduct,
-              image: matchedProduct.images?.[0] || existingDetails.image || "https://via.placeholder.com/150"
-            }
+            productDetails: existingDetails || {
+              name: "Product unavailable",
+              price: 0,
+              image: "https://via.placeholder.com/150",
+              specification: {},
+            },
           };
-        }
-        return {
-          ...item,
-          productDetails: existingDetails || {
-            name: "Product unavailable",
-            price: 0,
-            image: "https://via.placeholder.com/150",
-            specification: {}
-          }
-        };
-      });
+        });
 
-      setCartProducts(matchedItems);
+        setCartProducts(matchedItems);
+      } catch (error) {
+        console.error("Error fetching cart products:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (products.length) {
+      fetchCartProducts();
+    }
+  }, [cart, products]); // Removed cartProducts from dependencies to prevent loops
+
+  const handleQuantityChange = async (productId, delta) => {
+    if (isProcessing) return;
+    setIsProcessing(true);
+
+    try {
+      // Find current item for rollback
+      const currentItem = cart.find((item) => item.productId === productId);
+      if (!currentItem) {
+        throw new Error("Item not found in cart");
+      }
+
+      // Calculate new quantity
+      const newQuantity = currentItem.quantity + delta;
+      if (newQuantity < 1) {
+        setIsProcessing(false);
+        return;
+      }
+
+      // Optimistic update for both cart and cartProducts
+      const updatedCart = cart.map((item) =>
+        item.productId === productId ? { ...item, quantity: newQuantity } : item
+      );
+
+      setCart(updatedCart);
+
+      // Update cartProducts based on the new cart state
+      setCartProducts((prev) =>
+        prev.map((item) => {
+          if (item.productId === productId) {
+            const matchedProduct = products.find((p) => p.id === productId);
+            return {
+              ...item,
+              quantity: newQuantity,
+              productDetails: {
+                ...item.productDetails,
+                ...(matchedProduct || {}),
+              },
+            };
+          }
+          return item;
+        })
+      );
+
+      // Update backend
+      await updateCartItemQuantity(productId, newQuantity);
     } catch (error) {
-      console.error("Error fetching cart products:", error);
+      console.error("Quantity update failed:", error);
+      // Revert to previous cart state
+      setCart((prev) => [...prev]);
+      setCartProducts((prev) => [...prev]);
     } finally {
-      setIsLoading(false);
+      setIsProcessing(false);
     }
   };
 
-  if (products.length) {
-    fetchCartProducts();
-  }
-}, [cart, products]); // Removed cartProducts from dependencies to prevent loops
+  const handleRemoveItem = async (productId) => {
+    if (isProcessing) return;
+    setIsProcessing(true);
 
-const handleQuantityChange = async (productId, delta) => {
-  if (isProcessing) return;
-  setIsProcessing(true);
+    try {
+      // Optimistic UI update - remove from local state first
+      setCartProducts((prev) =>
+        prev.filter((item) => item.productId !== productId)
+      );
+      setCart((prev) => prev.filter((item) => item.productId !== productId));
 
-  try {
-    // Find current item for rollback
-    const currentItem = cart.find(item => item.productId === productId);
-    if (!currentItem) {
-      throw new Error("Item not found in cart");
-    }
-
-    // Calculate new quantity
-    const newQuantity = currentItem.quantity + delta;
-    if (newQuantity < 1) {
+      // Update backend
+      const itemToRemove = cart.find((item) => item.productId === productId);
+      if (itemToRemove) {
+        await removeFromCart(itemToRemove._id);
+      }
+    } catch (error) {
+      console.error("Error removing item:", error);
+      // Revert changes if backend removal fails
+      const itemToRestore = cart.find((item) => item.productId === productId);
+      if (itemToRestore) {
+        setCartProducts((prev) => [...prev, itemToRestore]);
+        setCart((prev) => [...prev, itemToRestore]);
+      }
+    } finally {
       setIsProcessing(false);
-      return;
     }
-
-    // Optimistic update for both cart and cartProducts
-    const updatedCart = cart.map(item => 
-      item.productId === productId ? { ...item, quantity: newQuantity } : item
-    );
-    
-    setCart(updatedCart);
-    
-    // Update cartProducts based on the new cart state
-    setCartProducts(prev => 
-      prev.map(item => {
-        if (item.productId === productId) {
-          const matchedProduct = products.find(p => p.id === productId);
-          return {
-            ...item,
-            quantity: newQuantity,
-            productDetails: {
-              ...item.productDetails,
-              ...(matchedProduct || {})
-            }
-          };
-        }
-        return item;
-      })
-    );
-
-    // Update backend
-    await updateCartItemQuantity(productId, newQuantity);
-
-  } catch (error) {
-    console.error("Quantity update failed:", error);
-    // Revert to previous cart state
-    setCart(prev => [...prev]);
-    setCartProducts(prev => [...prev]);
-  } finally {
-    setIsProcessing(false);
-  }
-};
-
-const handleRemoveItem = async (productId) => {
-  if (isProcessing) return;
-  setIsProcessing(true);
-
-  try {
-    // Optimistic UI update - remove from local state first
-    setCartProducts(prev => prev.filter(item => item.productId !== productId));
-    setCart(prev => prev.filter(item => item.productId !== productId));
-
-    // Update backend
-    const itemToRemove = cart.find(item => item.productId === productId);
-    if (itemToRemove) {
-      await removeFromCart(itemToRemove._id);
-    }
-  } catch (error) {
-    console.error("Error removing item:", error);
-    // Revert changes if backend removal fails
-    const itemToRestore = cart.find(item => item.productId === productId);
-    if (itemToRestore) {
-      setCartProducts(prev => [...prev, itemToRestore]);
-      setCart(prev => [...prev, itemToRestore]);
-    }
-  } finally {
-    setIsProcessing(false);
-  }
-};
-
-
-
-
+  };
 
   // Calculate totals
   const subtotal = cartProducts.reduce(
@@ -187,13 +189,13 @@ const handleRemoveItem = async (productId) => {
       </div>
     );
   }
-    if (isProcessing) {
-        return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <Loading message="Processing your request..." />
-        </div>
-        );
-    }
+  if (isProcessing) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <Loading message="Processing your request..." />
+      </div>
+    );
+  }
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
@@ -388,7 +390,10 @@ const handleRemoveItem = async (productId) => {
 
             <div className="mt-6">
               <Link
-                to="/checkout"
+                to={{
+                  pathname: "/checkout",
+                }}
+                state={{ cartProducts, subtotal, shippingFee, total }} // ✅ pass the data here
                 className="w-full flex justify-between items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
                 disabled={
                   isProcessing ||
