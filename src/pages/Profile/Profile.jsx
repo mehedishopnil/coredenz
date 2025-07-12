@@ -56,7 +56,12 @@ const Profile = () => {
                 <div className="w-full md:w-64 bg-white rounded-lg shadow-sm p-4 h-fit sticky top-4">
                     <div className="text-center mb-6">
                         <div className="w-24 h-24 bg-indigo-100 rounded-full mx-auto mb-3 flex items-center justify-center">
-                            <FaUser className="text-indigo-500 text-3xl" />
+                            {/* here should user img */}
+                            {user?.photoURL ? (
+                                <img src={user.photoURL} alt="User" className="w-full h-full rounded-full object-cover" />
+                            ) : (
+                                <FaUser className="text-indigo-500 text-3xl" />
+                            )}
                         </div>
                         <h2 className="text-xl font-bold">{user?.displayName || 'User'}</h2>
                         <p className="text-gray-500 text-sm">{user?.email}</p>
