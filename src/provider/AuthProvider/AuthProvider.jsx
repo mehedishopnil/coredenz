@@ -20,6 +20,9 @@ const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
+  const [orders, setOrders] = useState([]);
+
+  console.log(orders)
 
   const auth = getAuth(app);
   const googleProvider = new GoogleAuthProvider();
@@ -300,10 +303,44 @@ const updateCartItemQuantity = async (productId, newQuantity) => {
   }
 };
 
+
+
+// Place Order
+const placeOrder = async (orderData) => {
+  if (!user) {
+    throw new Error("You must be logged in to place an order");
+  }
+
+  try {
+    const response = await axios.post(`${API_URL}/orders`, orderData);
+    return response.data;
+  } catch (error) {
+    console.error("Error placing order:", error);
+    throw error;
+  }
+};
+
+// Fetch Order data(required email)
+const fetchOrders = useCallback(async (email) => {
+  if (!email) throw new Error("Email is required to fetch orders");
+
+  try {
+    const response = await axios.get(`${API_URL}/orders/${email}`);
+    setOrders(response.data);
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    throw error;
+  }
+}, [API_URL]);
+
+
   // Fetch products when the component mounts
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+useEffect(() => {
+  fetchProducts();
+  fetchOrders(user?.email);
+}, [fetchProducts, fetchOrders, user?.email]);
+
+
 
   // Fetch cart when user changes
   useEffect(() => {
@@ -328,6 +365,8 @@ const updateCartItemQuantity = async (productId, newQuantity) => {
     updateCartItemQuantity,
     fetchCart,
     clearError: () => setError(null),
+    placeOrder,
+    orders
   };
 
   return (

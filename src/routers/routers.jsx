@@ -10,6 +10,8 @@ import Development from "../pages/Development/Development";
 import GraphicDesign from "../pages/GraphicDesign/GraphicDesign";
 import WebDevLandingPage from "../components/WebDevLandingPage";
 import Checkout from "../components/Checkout/Checkout";
+import Orders from "../components/Orders/Orders";
+import Profile from "../pages/Profile/Profile";
 
 export const router = createBrowserRouter([
   {
@@ -57,6 +59,14 @@ export const router = createBrowserRouter([
       {
         path: "checkout",
         element: <Checkout />,
+      },
+      {
+        path: "orders",
+        element: <Orders />,
+      },
+      {
+        path: "profile",
+        element: <Profile />,
       }
     ],
   },

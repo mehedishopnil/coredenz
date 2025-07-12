@@ -177,6 +177,7 @@ const Header = () => {
             <div className="flex items-center space-x-4 ml-2">
               {user ? (
                 <div className="flex items-center space-x-4">
+                  <Link to="/profile" className="text-gray-100 font-medium">
                   <span className="text-gray-100 font-medium flex items-center">
                     <img
                       src={user.photoURL}
@@ -184,6 +185,7 @@ const Header = () => {
                       className="w-8 h-8 rounded-full"
                     />
                   </span>
+                  </Link>
                   <button
                     onClick={handleLogout}
                     className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md flex items-center transition-colors"

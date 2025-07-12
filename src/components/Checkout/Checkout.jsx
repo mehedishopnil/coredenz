@@ -5,9 +5,10 @@ import { HiOutlineLocationMarker } from 'react-icons/hi';
 import { BsCheckCircleFill } from 'react-icons/bs';
 import { AuthContext } from '../../provider/AuthProvider/AuthProvider';
 import PaymentMethod from '../PaymentMethod/PaymentMethod';
+import Swal from 'sweetalert2';
 
 const Checkout = () => {
-    const { cart, user } = useContext(AuthContext);
+    const { cart, user, placeOrder } = useContext(AuthContext);
     const [transactionId, setTransactionId] = useState('');
     const navigate = useNavigate();
 
@@ -15,10 +16,6 @@ const Checkout = () => {
     const { cartProducts = [], subtotal = 0, shippingFee = 0, total = 0 } = location.state || {};
 
     const {productDetails, productId, quantity} = cartProducts[0] || {};
-
-    console.log(transactionId);
-
-    console.log(cartProducts);
 
     // State for form inputs
     const [shippingInfo, setShippingInfo] = useState({
@@ -37,9 +34,7 @@ const Checkout = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [orderSuccess, setOrderSuccess] = useState(false);
 
-    // Calculate order totals
-    
-    const tax = subtotal * 0.08; // Example 8% tax
+
 
 
     const handleInputChange = (e) => {
@@ -48,27 +43,66 @@ const Checkout = () => {
     };
 
     const handleSubmitOrder = async (e) => {
-        e.preventDefault();
-        setIsProcessing(true);
-        
-        try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            // On success
-            setOrderSuccess(true);
-            
-            // In a real app, you would:
-            // 1. Send order to backend
-            // 2. Clear cart
-            // 3. Redirect to order confirmation
-            
-        } catch (error) {
-            console.error("Order submission failed:", error);
-        } finally {
-            setIsProcessing(false);
-        }
+    e.preventDefault();
+    setIsProcessing(true);
+
+    const orderData = {
+        userEmail: user?.email,
+        products: cartProducts.map(item => ({
+            productId: item.productId,
+            name: item.productDetails?.name,
+            image: item.productDetails?.image,
+            price: item.productDetails?.price,
+            quantity: item.quantity
+        })),
+        shippingInfo,
+        paymentMethod,
+        transactionId,
+        orderNotes,
+        subtotal,
+        shippingFee,
+       
+        total,
+        status: 'pending',
+        orderDate: new Date().toISOString()
     };
+
+    try {
+        const res = await placeOrder(orderData);
+
+        if (res.insertedId || res.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Order Placed!',
+                text: 'Your order has been successfully placed.',
+                confirmButtonColor: '#6366F1'
+            });
+            setOrderSuccess(true);
+            // Optionally clear cart here
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops!',
+                text: 'Something went wrong while placing your order.',
+                confirmButtonColor: '#EF4444'
+            });
+        }
+    } catch (error) {
+        console.error("Order submission failed:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Server Error',
+            text: 'Unable to submit your order. Please try again later.',
+            confirmButtonColor: '#EF4444'
+        });
+    } finally {
+        setIsProcessing(false);
+    }
+};
+
+
+
+    
 
     if (orderSuccess) {
         return (
@@ -109,10 +143,7 @@ const Checkout = () => {
                                 <span>Shipping:</span>
                                 <span>${shippingFee.toFixed(2)}</span>
                             </div>
-                            <div className="flex justify-between">
-                                <span>Tax:</span>
-                                <span>${tax.toFixed(2)}</span>
-                            </div>
+                            
                             <div className="flex justify-between font-bold text-lg pt-2 border-t border-gray-200">
                                 <span>Total:</span>
                                 <span>${total.toFixed(2)}</span>
@@ -355,10 +386,7 @@ const Checkout = () => {
                                     <span className="text-gray-600">Shipping</span>
                                     <span>${shippingFee.toFixed(2)}</span>
                                 </div>
-                                <div className="flex justify-between">
-                                    <span className="text-gray-600">Tax</span>
-                                    <span>${tax.toFixed(2)}</span>
-                                </div>
+                                
                                 <div className="flex justify-between font-bold text-lg pt-3 border-t border-gray-200">
                                     <span>Total</span>
                                     <span>${total.toFixed(2)}</span>
