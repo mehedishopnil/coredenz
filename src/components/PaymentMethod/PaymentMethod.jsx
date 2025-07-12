@@ -37,7 +37,7 @@ const PaymentMethod = ({ selectedMethod, onSelectMethod, onTransactionIdChange }
                             <ol className="list-decimal list-inside text-sm text-[#E3106D] space-y-1 mt-1">
                                 <li>Go to your Bkash Mobile Menu</li>
                                 <li>Select "Send Money"</li>
-                                <li>Enter our Bkash Number: <span className="font-bold">01316265634</span></li>
+                                <li>Enter our Bkash Number(personal): <span className="font-bold">01316265634</span></li>
                                 <li>Enter the amount</li>
                                 <li>Enter your PIN to confirm</li>
                             </ol>
@@ -86,7 +86,7 @@ const PaymentMethod = ({ selectedMethod, onSelectMethod, onTransactionIdChange }
                             <ol className="list-decimal list-inside text-sm text-[#ED1C24] space-y-1 mt-1">
                                 <li>Go to your Nagad Mobile Menu</li>
                                 <li>Select "Send Money"</li>
-                                <li>Enter our Nagad Number: <span className="font-bold">01316265634</span></li>
+                                <li>Enter our Nagad Number (personal): <span className="font-bold">01316265634</span></li>
                                 <li>Enter the amount</li>
                                 <li>Enter your PIN to confirm</li>
                             </ol>

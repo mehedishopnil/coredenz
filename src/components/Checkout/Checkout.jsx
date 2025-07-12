@@ -39,7 +39,6 @@ const Checkout = () => {
 
     // Calculate order totals
     
-   
     const tax = subtotal * 0.08; // Example 8% tax
 
 
@@ -324,7 +323,8 @@ const Checkout = () => {
                         </div>
                         <div className="p-6">
                             <div className="space-y-4">
-                                {cart.map(item => (
+                                {cartProducts.map(item => (
+                                    
                                     <div key={item._id} className="flex justify-between">
                                         <div className="flex items-center">
                                             <div className="w-16 h-16 bg-gray-100 rounded-md overflow-hidden mr-4">
