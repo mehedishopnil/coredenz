@@ -16,9 +16,6 @@ const SingleProductPage = () => {
   // Image Gallery state for main image index
   const [mainImageIndex, setMainImageIndex] = useState(0);
 
-
-  
-
   if (!product) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -133,7 +130,9 @@ const SingleProductPage = () => {
             <div className="mb-6">
               <div className="flex justify-between items-start flex-wrap gap-2">
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{name}</h2>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+                    {name}
+                  </h2>
                   <p className="text-gray-500 text-sm">
                     {brand} • {category}
                   </p>
@@ -209,11 +208,35 @@ const SingleProductPage = () => {
               </ul>
             </div>
 
+            {/* When user will click on Buy Now button it will redirect to the checkout page */}
             <div className="flex flex-col sm:flex-row gap-4">
               <AddToCart product={product} />
-              <button className="flex-1 border border-indigo-600 text-indigo-600 hover:bg-indigo-50 py-3 px-6 rounded-lg font-medium transition-colors duration-200">
-                Buy Now
-              </button>
+             <button
+  onClick={() =>
+    navigate('/checkout', {
+      state: {
+        cartProducts: [
+          {
+            productId: product.id,
+            productDetails: {
+              name: product.name,
+              image: product.images?.[0],
+              price: product.price,
+            },
+            quantity: 1,
+          },
+        ],
+        subtotal: product.price,
+        shippingFee: 0, // or any logic you have for shipping
+        total: product.price, // subtotal + shipping
+      },
+    })
+  }
+  className="flex-1 border border-indigo-600 text-indigo-600 hover:bg-indigo-50 py-3 px-6 rounded-lg font-medium transition-colors duration-200"
+>
+  Buy Now
+</button>
+
             </div>
           </div>
         </div>
@@ -279,6 +302,5 @@ const SingleProductPage = () => {
     </div>
   );
 };
-
 
 export default SingleProductPage;

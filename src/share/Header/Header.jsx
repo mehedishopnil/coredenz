@@ -38,10 +38,11 @@ const navItems = [
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null);
-  const { user, loading, cart } = useContext(AuthContext);
+  const { user, logOut, loading, cart } = useContext(AuthContext);
 
   const handleLogout = () => {
-    // Implement your logout logic here
+    //here the logout function
+    logOut();
     console.log("User logged out");
     setMenuOpen(false);
   };
