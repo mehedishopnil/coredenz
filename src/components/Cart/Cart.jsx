@@ -128,33 +128,27 @@ const Cart = () => {
   };
 
   const handleRemoveItem = async (productId) => {
-    if (isProcessing) return;
-    setIsProcessing(true);
+  if (isProcessing) return;
+  setIsProcessing(true);
 
-    try {
-      setCartProducts((prev) =>
-        prev.filter((item) => item.productId !== productId)
-      );
+  try {
+    const itemToRemove = cartProducts.find((item) => item.productId === productId);
+    const cartItemId = itemToRemove?._id;
 
-      if (user?.email) {
-        const itemToRemove = cart.find((item) => item.productId === productId);
-        if (itemToRemove) {
-          await removeFromCart(itemToRemove._id);
-          setCart((prev) =>
-            prev.filter((item) => item.productId !== productId)
-          );
-        }
-      } else {
-        const guestCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
-        const updatedCart = guestCart.filter((item) => item.id !== productId);
-        localStorage.setItem("guestCart", JSON.stringify(updatedCart));
-      }
-    } catch (err) {
-      console.error("Remove failed:", err);
-    } finally {
-      setIsProcessing(false);
+    if (cartItemId) {
+      await removeFromCart(cartItemId); // ✅ use the correct _id
     }
-  };
+
+    setCartProducts((prev) =>
+      prev.filter((item) => item.productId !== productId)
+    );
+  } catch (err) {
+    console.error("Remove failed:", err);
+  } finally {
+    setIsProcessing(false);
+  }
+};
+
 
   useEffect(() => {
     const transferGuestCartToBackend = async () => {

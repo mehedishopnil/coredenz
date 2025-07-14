@@ -289,19 +289,13 @@ const updateCartItemQuantity = async (productId, newQuantity) => {
   }
 
   try {
-    // Send delete request to backend
     await axios.delete(`${API_URL}/cart/${cartItemId}`);
-
-    // Optimistically update UI
     setCart((prev) => prev.filter((item) => item._id !== cartItemId));
-
-    // Optional: Show user notification
-    // toast.success("Item removed from cart");
   } catch (error) {
     console.error("Error removing from cart:", error);
-    // toast.error("Failed to remove item. Try again.");
   }
 };
+
 
 
 
