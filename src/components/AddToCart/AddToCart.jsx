@@ -9,40 +9,43 @@ const AddToCart = ({ product }) => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleAddToCart = async () => {
-    if (!product?.id) return toast.error("Invalid product!");
+    if (!product?.id || !product?.name || !product?.price) {
+      return toast.error("Product data is incomplete!");
+    }
 
     setIsProcessing(true);
 
     try {
       if (user?.email) {
+        // Logged-in user: Send to backend
         if (typeof addToCart === "function") {
           await addToCart(product.id, 1);
           toast.success("Added to cart!");
         } else {
-          toast.error("Add to cart function is not available.");
+          toast.error("Add to cart function not available.");
         }
       } else {
-        // Guest cart in localStorage
+        // Guest: Store in localStorage
         const guestCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
-        const existingIndex = guestCart.findIndex(item => item.id === product.id);
+        const index = guestCart.findIndex(item => item.id === product.id);
 
-        if (existingIndex >= 0) {
-          guestCart[existingIndex].quantity += 1;
+        if (index !== -1) {
+          guestCart[index].quantity += 1;
         } else {
           guestCart.push({
             id: product.id,
             name: product.name,
             price: product.price,
             image: product?.images?.[0] || "",
-            quantity: 1
+            quantity: 1,
           });
         }
 
         localStorage.setItem("guestCart", JSON.stringify(guestCart));
-        toast.success("Added to cart!");
+        toast.success("Added to cart (saved locally)");
       }
     } catch (error) {
-      console.error("Add to cart failed", error);
+      console.error("Add to cart error:", error);
       toast.error("Failed to add to cart");
     } finally {
       setIsProcessing(false);

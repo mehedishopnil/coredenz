@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   FaBars,
   FaTimes,
@@ -21,6 +21,8 @@ import logo from "../../assets/images/CoreDenz-logo.png";
 import { FaX } from "react-icons/fa6";
 
 const navItems = [
+  
+
   { name: "Home", href: "/" },
   { name: "Products", href: "/products" },
   { name: "About", href: "/about" },
@@ -39,6 +41,16 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const { user, logOut, loading, cart } = useContext(AuthContext);
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+  if (user?.email) {
+    setCartCount(cart.length);
+  } else {
+    const guestCart = JSON.parse(localStorage.getItem("guestCart")) || [];
+    setCartCount(guestCart.length);
+  }
+}, [user, cart]);
 
   const handleLogout = () => {
     //here the logout function
@@ -132,9 +144,9 @@ const Header = () => {
             className="relative text-gray-100 hover:text-yellow-400"
           >
             <FaShoppingCart className="text-xl" />
-            {cart.length > 0 && (
+            {cartCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                {cart.length}
+                {cartCount}
               </span>
             )}
           </Link>

@@ -7,12 +7,19 @@ import {
   FaArrowRight,
   FaShoppingBag,
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Loading from "../Loading/Loading";
 
 const Cart = () => {
-  const { cart, setCart, removeFromCart, updateCartItemQuantity, products } =
-    useContext(AuthContext);
+  const {
+    user,
+    cart,
+    setCart,
+    removeFromCart,
+    updateCartItemQuantity,
+    products,
+    addToCart,
+  } = useContext(AuthContext);
   const [cartProducts, setCartProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -22,14 +29,26 @@ const Cart = () => {
     const fetchCartProducts = () => {
       setIsLoading(true);
       try {
-        const matchedItems = cart.map((item) => {
-          const matchedProduct = products.find((p) => p.id === item.productId);
+        let activeCart = [];
 
-          // Preserve existing productDetails if available
-          const existingItem = cartProducts.find(
-            (ci) => ci.productId === item.productId
+        if (user?.email) {
+          // Authenticated user
+          activeCart = cart;
+        } else {
+          // Guest user
+          const guestCart = JSON.parse(
+            localStorage.getItem("guestCart") || "[]"
           );
-          const existingDetails = existingItem?.productDetails || {};
+          activeCart = guestCart.map((item) => ({
+            ...item,
+            productId: item.id || item.productId,
+            _id: item.id || item.productId, // fallback key
+          }));
+        }
+
+        const matchedItems = activeCart.map((item) => {
+          const matchedProduct = products.find((p) => p.id === item.productId);
+          const existingDetails = item?.productDetails || {};
 
           if (matchedProduct) {
             return {
@@ -57,7 +76,7 @@ const Cart = () => {
 
         setCartProducts(matchedItems);
       } catch (error) {
-        console.error("Error fetching cart products:", error);
+        console.error("Error loading cart:", error);
       } finally {
         setIsLoading(false);
       }
@@ -66,58 +85,43 @@ const Cart = () => {
     if (products.length) {
       fetchCartProducts();
     }
-  }, [cart, products]); // Removed cartProducts from dependencies to prevent loops
+  }, [cart, products, user]);
 
   const handleQuantityChange = async (productId, delta) => {
     if (isProcessing) return;
     setIsProcessing(true);
 
     try {
-      // Find current item for rollback
-      const currentItem = cart.find((item) => item.productId === productId);
-      if (!currentItem) {
-        throw new Error("Item not found in cart");
-      }
+      const currentItem = cartProducts.find(
+        (item) => item.productId === productId
+      );
+      if (!currentItem) throw new Error("Item not found");
 
-      // Calculate new quantity
       const newQuantity = currentItem.quantity + delta;
-      if (newQuantity < 1) {
-        setIsProcessing(false);
-        return;
+      if (newQuantity < 1) return;
+
+      if (user?.email) {
+        // Authenticated: backend update
+        await updateCartItemQuantity(productId, newQuantity);
+      } else {
+        // Guest: localStorage update
+        const guestCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
+        const updatedCart = guestCart.map((item) =>
+          item.id === productId ? { ...item, quantity: newQuantity } : item
+        );
+        localStorage.setItem("guestCart", JSON.stringify(updatedCart));
       }
 
-      // Optimistic update for both cart and cartProducts
-      const updatedCart = cart.map((item) =>
-        item.productId === productId ? { ...item, quantity: newQuantity } : item
-      );
-
-      setCart(updatedCart);
-
-      // Update cartProducts based on the new cart state
+      // Update state
       setCartProducts((prev) =>
-        prev.map((item) => {
-          if (item.productId === productId) {
-            const matchedProduct = products.find((p) => p.id === productId);
-            return {
-              ...item,
-              quantity: newQuantity,
-              productDetails: {
-                ...item.productDetails,
-                ...(matchedProduct || {}),
-              },
-            };
-          }
-          return item;
-        })
+        prev.map((item) =>
+          item.productId === productId
+            ? { ...item, quantity: newQuantity }
+            : item
+        )
       );
-
-      // Update backend
-      await updateCartItemQuantity(productId, newQuantity);
-    } catch (error) {
-      console.error("Quantity update failed:", error);
-      // Revert to previous cart state
-      setCart((prev) => [...prev]);
-      setCartProducts((prev) => [...prev]);
+    } catch (err) {
+      console.error("Quantity update failed:", err);
     } finally {
       setIsProcessing(false);
     }
@@ -128,29 +132,57 @@ const Cart = () => {
     setIsProcessing(true);
 
     try {
-      // Optimistic UI update - remove from local state first
       setCartProducts((prev) =>
         prev.filter((item) => item.productId !== productId)
       );
-      setCart((prev) => prev.filter((item) => item.productId !== productId));
 
-      // Update backend
-      const itemToRemove = cart.find((item) => item.productId === productId);
-      if (itemToRemove) {
-        await removeFromCart(itemToRemove._id);
+      if (user?.email) {
+        const itemToRemove = cart.find((item) => item.productId === productId);
+        if (itemToRemove) {
+          await removeFromCart(itemToRemove._id);
+          setCart((prev) =>
+            prev.filter((item) => item.productId !== productId)
+          );
+        }
+      } else {
+        const guestCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
+        const updatedCart = guestCart.filter((item) => item.id !== productId);
+        localStorage.setItem("guestCart", JSON.stringify(updatedCart));
       }
-    } catch (error) {
-      console.error("Error removing item:", error);
-      // Revert changes if backend removal fails
-      const itemToRestore = cart.find((item) => item.productId === productId);
-      if (itemToRestore) {
-        setCartProducts((prev) => [...prev, itemToRestore]);
-        setCart((prev) => [...prev, itemToRestore]);
-      }
+    } catch (err) {
+      console.error("Remove failed:", err);
     } finally {
       setIsProcessing(false);
     }
   };
+
+  useEffect(() => {
+    const transferGuestCartToBackend = async () => {
+      const guestCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
+
+      if (
+        guestCart.length > 0 &&
+        user?.email &&
+        typeof addToCart === "function"
+      ) {
+        try {
+          for (const item of guestCart) {
+            const payload = {
+              productId: item.productId || item.id,
+              quantity: item.quantity,
+              specification: item?.specification || {}, // color/size if any
+            };
+            await addToCart(payload); // send to backend
+          }
+          localStorage.removeItem("guestCart"); // clean local storage
+        } catch (err) {
+          console.error("Failed to transfer guest cart:", err);
+        }
+      }
+    };
+
+    transferGuestCartToBackend();
+  }, [user, addToCart]); // run only when user logs in
 
   // Calculate totals
   const subtotal = cartProducts.reduce(
@@ -228,7 +260,7 @@ const Cart = () => {
                     </p>
                   )}
                   <p className="text-lg font-semibold mt-2">
-                    ${item.productDetails.price.toFixed(2)}
+                    ${(Number(item.productDetails.price) || 0).toFixed(2)}
                   </p>
                 </div>
               </div>
@@ -270,8 +302,7 @@ const Cart = () => {
               </div>
 
               <div className="mt-3 text-right font-medium">
-                Total: ${(item.productDetails.price * item.quantity).toFixed(2)}
-              </div>
+                Total: ${(Number(item?.productDetails?.price ?? 0) * item.quantity).toFixed(2)}              </div>
             </div>
           ))}
         </div>
@@ -313,7 +344,7 @@ const Cart = () => {
                   </div>
 
                   <div className="col-span-2 text-center text-gray-900">
-                    ${item.productDetails.price.toFixed(2)}
+                    ${Number(item?.productDetails?.price ?? 0).toFixed(2)}
                   </div>
 
                   <div className="col-span-3 flex justify-center">
@@ -346,8 +377,8 @@ const Cart = () => {
 
                   <div className="col-span-2 flex items-center justify-end space-x-4">
                     <span className="font-medium">
-                      ${(item.productDetails.price * item.quantity).toFixed(2)}
-                    </span>
+                      ${(Number(item?.productDetails?.price ?? 0) * item.quantity).toFixed(2)}
+                  </span>
                     <button
                       onClick={() => handleRemoveItem(item.productId)}
                       disabled={isProcessing}
@@ -389,22 +420,27 @@ const Cart = () => {
             </div>
 
             <div className="mt-6">
-              <Link
-                to={{
-                  pathname: "/checkout",
+              <button
+                onClick={() => {
+                  if (user) {
+                    window.location.href = "/checkout";
+                  } else {
+                    window.location.href = `/sign-in?redirect=${encodeURIComponent(
+                      window.location.pathname
+                    )}`;
+                  }
                 }}
-                state={{ cartProducts, subtotal, shippingFee, total }} // ✅ pass the data here
-                className="w-full flex justify-between items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
                 disabled={
                   isProcessing ||
                   cartProducts.some(
                     (item) => item.productDetails.name === "Product unavailable"
                   )
                 }
+                className="w-full flex justify-between items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
               >
                 <span>Proceed to Checkout</span>
                 <FaArrowRight className="ml-2" />
-              </Link>
+              </button>
             </div>
 
             <div className="mt-4 text-center text-sm text-gray-500">

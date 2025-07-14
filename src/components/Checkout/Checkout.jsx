@@ -42,9 +42,28 @@ const Checkout = () => {
         setShippingInfo(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmitOrder = async (e) => {
+
+    
+    // Handle order submission
+
+const handleSubmitOrder = async (e) => {
     e.preventDefault();
     setIsProcessing(true);
+
+    // Check required shipping fields
+    const requiredFields = ['firstName', 'lastName', 'address', 'city', 'state', 'zipCode', 'phone', 'email'];
+    const missingFields = requiredFields.filter(field => !shippingInfo[field]?.trim());
+
+    if (missingFields.length > 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Incomplete Shipping Info',
+            text: 'Please fill in all required shipping fields before placing the order.',
+            confirmButtonColor: '#EF4444'
+        });
+        setIsProcessing(false);
+        return;
+    }
 
     const orderData = {
         userEmail: user?.email,
@@ -61,7 +80,6 @@ const Checkout = () => {
         orderNotes,
         subtotal,
         shippingFee,
-       
         total,
         status: 'pending',
         orderDate: new Date().toISOString()
@@ -78,7 +96,6 @@ const Checkout = () => {
                 confirmButtonColor: '#6366F1'
             });
             setOrderSuccess(true);
-            // Optionally clear cart here
         } else {
             Swal.fire({
                 icon: 'error',
@@ -183,7 +200,7 @@ const Checkout = () => {
             <div className="lg:grid lg:grid-cols-12 lg:gap-8">
                 {/* Left Column - Shipping and Payment */}
                 <div className="lg:col-span-8 space-y-8">
-                    {/* Shipping Information */}
+                    {/* Shipping Information should be required. without providing the info the user should not make the order */}
                     <div className="bg-white shadow-sm rounded-lg overflow-hidden">
                         <div className="px-6 py-4 border-b border-gray-200">
                             <h2 className="text-lg font-medium flex items-center">
