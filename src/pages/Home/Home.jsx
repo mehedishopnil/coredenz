@@ -21,6 +21,8 @@ const Home = () => {
   const { services, products, loading, error } = useContext(AuthContext);
   const [activeCategory, setActiveCategory] = useState('all');
 
+  // DEVELOPMENT SERVICES ==============================
+
   // First filter required categories
   const allowedCategories = ['web', 'mobile', 'backend'];
 
@@ -28,11 +30,39 @@ const Home = () => {
     allowedCategories.includes(s.category?.toLowerCase())
   );
 
-  // Apply activeCategory filter on top of that
+  // Apply activeCategory filter
   const filteredServices =
     activeCategory === 'all'
       ? filteredServicesCategory
       : filteredServicesCategory.filter(s => s.category === activeCategory);
+
+  // Unique categories for Development Services
+  const devCategories = [
+    'all',
+    ...new Set(filteredServicesCategory.map(item => item.category)),
+  ];
+
+  // GRAPHIC DESIGN SERVICES ============================
+
+  const graphicAllowedCategories = ['branding', 'digital', 'print', 'creative'];
+
+  const graphicFilteredServicesCategory = services?.filter(s =>
+    graphicAllowedCategories.includes(s.category?.toLowerCase())
+  );
+
+  // Apply activeCategory filter
+  const graphicFilteredServices =
+    activeCategory === 'all'
+      ? graphicFilteredServicesCategory
+      : graphicFilteredServicesCategory.filter(
+          s => s.category === activeCategory
+        );
+
+  // Unique categories for Graphic Services
+  const graphicCategories = [
+    'all',
+    ...new Set(graphicFilteredServicesCategory.map(item => item.category)),
+  ];
 
   // Category data with name and corresponding icon
   const Categories = [
@@ -283,6 +313,7 @@ const Home = () => {
 
       {/* Featured Services Section */}
       <section className="py-20 px-4 bg-gradient-to-b from-white to-gray-50">
+        {/* Development Services */}
         <div className="text-center mb-12">
           <div className="inline-block px-4 py-2 bg-[#00B4D8]/10 text-[#00B4D8] rounded-full font-semibold text-sm mb-4">
             DEVELOPMENT SERVICES
@@ -294,16 +325,44 @@ const Home = () => {
             Comprehensive solutions tailored to your needs
           </p>
         </div>
+
         <Services
-          filteredServicesCategory={filteredServicesCategory}
+          categories={devCategories}
           activeCategory={activeCategory}
           setActiveCategory={setActiveCategory}
           filteredServices={filteredServices}
         />
 
         <Link to="/services/development">
-          <button className="px-6 py-2.5 rounded-full font-semibold transition-all bg-[#00B4D8] text-white shadow-lg mt-10 mx-auto block hover:bg-[#00B4D8]/90"> Explore More</button>
+          <button className="px-6 py-2.5 rounded-full font-semibold transition-all bg-[#00B4D8] text-white shadow-lg mt-10 mx-auto block hover:bg-[#00B4D8]/90">
+            {' '}
+            Explore More
+          </button>
         </Link>
+
+        {/* GRAPHIC DESIGN SERVICES */}
+        <div className="text-center my-20 spcace-y-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Design Services We Offer
+          </h2>
+          <p className="text-lg text-gray-600 max-w-2xl pb-4 mx-auto">
+            From logos to complete identities
+          </p>
+
+          <Services
+            categories={graphicCategories}
+            activeCategory={activeCategory}
+            setActiveCategory={setActiveCategory}
+            filteredServices={graphicFilteredServices}
+          />
+
+          <Link to="/services/design">
+            <button className="px-6 py-2.5 rounded-full font-semibold transition-all bg-[#00B4D8] text-white shadow-lg mt-10 mx-auto block hover:bg-[#00B4D8]/90">
+              {' '}
+              Explore More
+            </button>
+          </Link>
+        </div>
       </section>
 
       {/* Testimonials Section */}
