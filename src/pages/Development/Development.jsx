@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   FaLaptopCode,
   FaMobileAlt,
@@ -16,9 +16,13 @@ import {
 import { MdDesignServices, MdSpeed, MdSecurity } from 'react-icons/md';
 import { BsCheck2Circle, BsArrowRight, BsStarFill } from 'react-icons/bs';
 import { HiSparkles } from 'react-icons/hi';
+import { AuthContext } from '../../provider/AuthProvider/AuthProvider';
+import Services from '../../components/Services/Services';
 
 const Development = () => {
-  const [activeTab, setActiveTab] = useState('all');
+  const { services } = useContext(AuthContext);
+
+  const [activeCategory, setActiveCategory] = useState('all');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -27,74 +31,6 @@ const Development = () => {
     message: '',
   });
   const [submitSuccess, setSubmitSuccess] = useState(false);
-
-  const services = [
-    {
-      title: 'Web Development',
-      icon: <FaLaptopCode className="text-4xl" />,
-      description:
-        'Custom websites and web apps with cutting-edge tech for optimal performance.',
-      features: ['React & Next.js', 'Responsive Design', 'SEO Optimized'],
-      color: 'from-blue-500 to-cyan-500',
-      category: 'web',
-    },
-    {
-      title: 'Mobile Apps',
-      icon: <FaMobileAlt className="text-4xl" />,
-      description: 'Native and cross-platform apps for iOS and Android.',
-      features: ['React Native', 'Flutter', 'Push Notifications'],
-      color: 'from-green-500 to-emerald-500',
-      category: 'mobile',
-    },
-    {
-      title: 'Backend Dev',
-      icon: <FaServer className="text-4xl" />,
-      description: 'Robust backend solutions with secure APIs.',
-      features: ['Node.js', 'RESTful APIs', 'Cloud Integration'],
-      color: 'from-orange-500 to-red-500',
-      category: 'backend',
-    },
-    {
-      title: 'Database',
-      icon: <FaDatabase className="text-4xl" />,
-      description: 'Optimized database architectures for data integrity.',
-      features: ['MongoDB', 'PostgreSQL', 'Performance Tuning'],
-      color: 'from-purple-500 to-pink-500',
-      category: 'backend',
-    },
-    {
-      title: 'UI/UX Design',
-      icon: <MdDesignServices className="text-4xl" />,
-      description: 'Beautiful interfaces designed to captivate users.',
-      features: ['Figma', 'Prototyping', 'Brand Identity'],
-      color: 'from-pink-500 to-rose-500',
-      category: 'design',
-    },
-    {
-      title: 'E-Commerce',
-      icon: <FaShoppingCart className="text-4xl" />,
-      description: 'Complete e-commerce platforms with payment gateways.',
-      features: ['Shopping Cart', 'Payment Gateway', 'Admin Panel'],
-      color: 'from-yellow-500 to-orange-500',
-      category: 'web',
-    },
-    {
-      title: 'Cloud Services',
-      icon: <FaCloud className="text-4xl" />,
-      description: 'Cloud setup and management for scalable apps.',
-      features: ['AWS & Azure', 'DevOps', '24/7 Monitoring'],
-      color: 'from-indigo-500 to-blue-500',
-      category: 'backend',
-    },
-    {
-      title: 'API Integration',
-      icon: <FaCogs className="text-4xl" />,
-      description: 'Seamless third-party service integration.',
-      features: ['Payment APIs', 'Social Media', 'Custom APIs'],
-      color: 'from-teal-500 to-cyan-500',
-      category: 'backend',
-    },
-  ];
 
   const packages = [
     {
@@ -208,10 +144,18 @@ const Development = () => {
     setTimeout(() => setSubmitSuccess(false), 5000);
   };
 
+  // First filter required categories
+  const allowedCategories = ['web', 'mobile', 'backend'];
+
+  const filteredServicesCategory = services?.filter(s =>
+    allowedCategories.includes(s.category?.toLowerCase())
+  );
+
+  // Apply activeCategory filter on top of that
   const filteredServices =
-    activeTab === 'all'
-      ? services
-      : services.filter(s => s.category === activeTab);
+    activeCategory === 'all'
+      ? filteredServicesCategory
+      : filteredServicesCategory.filter(s => s.category === activeCategory);
 
   return (
     <div className="bg-white">
@@ -292,68 +236,12 @@ const Development = () => {
 
       {/* Services */}
       <section className="py-20 px-4 bg-gradient-to-b from-white to-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="inline-block px-4 py-2 bg-[#00B4D8]/10 text-[#00B4D8] rounded-full font-semibold text-sm mb-4">
-              OUR SERVICES
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              What We Offer
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Comprehensive solutions tailored to your needs
-            </p>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
-            {['all', 'web', 'mobile', 'backend', 'design'].map(tab => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-6 py-2.5 rounded-full font-semibold transition-all ${
-                  activeTab === tab
-                    ? 'bg-[#00B4D8] text-white shadow-lg'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </button>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredServices.map((s, i) => (
-              <div
-                key={i}
-                className="group bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-[#00B4D8]/30 hover:-translate-y-2"
-              >
-                <div className={`h-2 bg-gradient-to-r ${s.color}`}></div>
-                <div className="p-6">
-                  <div
-                    className={`inline-flex p-4 rounded-xl bg-gradient-to-r ${s.color} text-white mb-4 group-hover:scale-110 transition-transform`}
-                  >
-                    {s.icon}
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#00B4D8] transition-colors">
-                    {s.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm mb-4">{s.description}</p>
-                  <div className="space-y-2">
-                    {s.features.map((f, j) => (
-                      <div
-                        key={j}
-                        className="flex items-center text-sm text-gray-700"
-                      >
-                        <FaCheckCircle className="text-green-500 mr-2 flex-shrink-0" />
-                        <span>{f}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <Services
+          activeCategory={activeCategory}
+          setActiveCategory={setActiveCategory}
+          filteredServices={filteredServices}
+          filteredServicesCategory={filteredServicesCategory}
+        />
       </section>
 
       {/* Why Choose Us */}

@@ -21,9 +21,7 @@ const AuthProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [orders, setOrders] = useState([])
-
-
-  console.log(products)
+  const [services, setServices] = useState([]);
   
   const auth = getAuth(app);
   const googleProvider = new GoogleAuthProvider();
@@ -203,6 +201,19 @@ const AuthProvider = ({ children }) => {
     }
   }, [API_URL]);
 
+
+  // Fetch services data - memoized with useCallback
+  const fetchServices = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API_URL}/services`);
+      setServices(response.data);
+    } catch (err) {
+      console.error("Error fetching services:", err);
+      setError("Failed to load services");
+    }
+  }, [API_URL]);
+
+
   // Cart operations
   const addToCart = async (productId, quantity = 1) => {
     if (!user) throw new Error("You must be logged in to add to cart");
@@ -332,6 +343,7 @@ const fetchOrders = useCallback(async (email) => {
   // Fetch products when the component mounts
 useEffect(() => {
   fetchProducts();
+  fetchServices();
   fetchOrders(user?.email);
 }, [fetchProducts, fetchOrders, user?.email]);
 
@@ -353,6 +365,7 @@ useEffect(() => {
     signInWithGoogle,
     logOut,
     products,
+    services,
     cart,
     setCart,
     addToCart,
