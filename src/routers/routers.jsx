@@ -14,6 +14,7 @@ import Orders from "../components/Orders/Orders";
 import Profile from "../pages/Profile/Profile";
 import SingleCategory from "../components/SingleCategory/SingleCategory";
 import About from "../pages/About/About";
+import Contact from "../pages/Contact/Contact";
 
 export const router = createBrowserRouter([
   {
@@ -73,6 +74,10 @@ export const router = createBrowserRouter([
       {
         path: "about",
         element: <About />,
+      },
+      {
+        path: "contact",
+        element: <Contact />
       },
       {
         path: "single-category/:category",
