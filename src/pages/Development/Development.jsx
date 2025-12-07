@@ -236,6 +236,17 @@ const Development = () => {
 
       {/* Services */}
       <section className="py-20 px-4 bg-gradient-to-b from-white to-gray-50">
+        <div className="text-center mb-12">
+          <div className="inline-block px-4 py-2 bg-[#00B4D8]/10 text-[#00B4D8] rounded-full font-semibold text-sm mb-4">
+           DEVELOPMENT SERVICES
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            What We Offer
+          </h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Comprehensive solutions tailored to your needs
+          </p>
+        </div>
         <Services
           activeCategory={activeCategory}
           setActiveCategory={setActiveCategory}

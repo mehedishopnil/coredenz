@@ -328,6 +328,17 @@ const GraphicDesign = () => {
 
       {/* Services */}
       <section className="py-20 px-4 bg-gradient-to-b from-white to-gray-50">
+        <div className="text-center mb-12">
+          <div className="inline-block px-4 py-2 bg-[#00B4D8]/10 text-[#00B4D8] rounded-full font-semibold text-sm mb-4">
+            SERVICES
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Design Services We Offer
+          </h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            From logos to complete identities
+          </p>
+        </div>
         <Services
           filteredServicesCategory={filteredServicesCategory}
           activeCategory={activeCategory}
