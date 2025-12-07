@@ -108,7 +108,7 @@ const DesktopHeader = ({
       </nav>
 
       {/* Right Side Items */}
-      <div className="hidden md:flex items-center space-x-6">
+      <div className="hidden md:flex items-center space-x-10">
         {/* Cart */}
         <Link
           to="/cart"
@@ -135,14 +135,6 @@ const DesktopHeader = ({
           </a>
         </div>
 
-        {/* Phone */}
-        <a
-          href="tel:+1234567890"
-          className="flex items-center text-gray-100 hover:text-blue-500 font-medium"
-        >
-          <FaPhone className="mr-1" />
-          <span className="hidden lg:inline">01316265634</span>
-        </a>
 
         {/* Auth */}
         {!loading && (

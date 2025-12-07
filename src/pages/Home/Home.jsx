@@ -78,6 +78,20 @@ const Home = () => {
       gradient: 'from-[#040144] to-purple-600',
       count: '100+ Products',
     },
+    {
+      name: 'Web Development',
+      icon: <BsFillLaptopFill className="text-3xl" />,
+      gradient: 'from-[#00B4D8] to-blue-500',
+      count: 'View Services',
+      link: '/services/development',
+    },
+    {
+      name: 'Graphics Design',
+      icon: <MdDevicesOther className="text-3xl" />,
+      gradient: 'from-[#040144] to-purple-600',
+      count: 'View Services',
+      link: '/services/graphic-design',
+    },
   ];
 
   const features = [
@@ -208,52 +222,52 @@ const Home = () => {
       {/* Featured Categories Section */}
       <section className="max-w-7xl mx-auto py-20 px-4">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-[#00B4D8]/10 px-4 py-2 rounded-full mb-4">
+          <div className="inline-flex items-center gap-2 bg-[#00B4D8]/10 px-3 py-1.5 rounded-full mb-4">
             <TrendingUp className="w-4 h-4 text-[#00B4D8]" />
             <span className="text-[#040144] text-sm font-semibold">
               Popular Categories
             </span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-[#040144] mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#040144] mb-4">
             Shop by <span className="text-[#00B4D8]">Category</span>
           </h2>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-600 text-base max-w-2xl mx-auto">
             Discover amazing products organized just for you
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {Categories.map((category, index) => (
             <Link
               key={index}
-              to={`/single-category/${category.name.toLowerCase()}`}
-              className="group relative overflow-hidden bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+              to={category.link}
+              className="group relative overflow-hidden bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-1"
             >
               <div
                 className={`absolute inset-0 bg-gradient-to-br ${category.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
               ></div>
 
-              <div className="relative p-10">
+              <div className="relative p-6">
                 <div
-                  className={`w-20 h-20 bg-gradient-to-br ${category.gradient} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-lg`}
+                  className={`w-16 h-16 bg-gradient-to-br ${category.gradient} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-105 transition-transform duration-500 shadow-lg`}
                 >
-                  <div className="text-white text-4xl">{category.icon}</div>
+                  <div className="text-white text-3xl">{category.icon}</div>
                 </div>
 
-                <h3 className="text-3xl font-bold text-[#040144] mb-2">
+                <h3 className="text-2xl font-bold text-[#040144] mb-1">
                   {category.name}
                 </h3>
-                <p className="text-gray-500 mb-6">{category.count}</p>
+                <p className="text-gray-500 mb-4 text-sm">{category.count}</p>
 
-                <div className="flex items-center gap-2 text-[#00B4D8] font-semibold group-hover:gap-4 transition-all">
+                <div className="flex items-center gap-2 text-[#00B4D8] font-semibold group-hover:gap-3 transition-all text-sm">
                   Explore Collection
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 h-4" />
                 </div>
               </div>
 
               {/* Decorative circle */}
               <div
-                className={`absolute -bottom-12 -right-12 w-40 h-40 bg-gradient-to-br ${category.gradient} rounded-full opacity-10 group-hover:opacity-20 transition-opacity duration-500`}
+                className={`absolute -bottom-10 -right-10 w-36 h-36 bg-gradient-to-br ${category.gradient} rounded-full opacity-10 group-hover:opacity-20 transition-opacity duration-500`}
               ></div>
             </Link>
           ))}
