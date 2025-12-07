@@ -20,10 +20,11 @@ const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState([])
 
-  console.log(orders)
 
+  console.log(products)
+  
   const auth = getAuth(app);
   const googleProvider = new GoogleAuthProvider();
   const API_URL = import.meta.env.VITE_API_Link;

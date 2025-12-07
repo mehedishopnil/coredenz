@@ -21,11 +21,9 @@ import logo from "../../assets/images/CoreDenz-logo.png";
 import { FaX } from "react-icons/fa6";
 
 const navItems = [
-  
-
   { name: "Home", href: "/" },
   { name: "Products", href: "/products" },
-  { name: "About", href: "/about" },
+
   {
     name: "Services",
     href: "/services",
@@ -34,6 +32,7 @@ const navItems = [
       { name: "Graphic Design", href: "/services/graphic-design" },
     ],
   },
+  { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
 ];
 
@@ -44,13 +43,13 @@ const Header = () => {
   const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
-  if (user?.email) {
-    setCartCount(cart.length);
-  } else {
-    const guestCart = JSON.parse(localStorage.getItem("guestCart")) || [];
-    setCartCount(guestCart.length);
-  }
-}, [user, cart]);
+    if (user?.email) {
+      setCartCount(cart.length);
+    } else {
+      const guestCart = JSON.parse(localStorage.getItem("guestCart")) || [];
+      setCartCount(guestCart.length);
+    }
+  }, [user, cart]);
 
   const handleLogout = () => {
     //here the logout function
@@ -191,13 +190,13 @@ const Header = () => {
               {user ? (
                 <div className="flex items-center space-x-4">
                   <Link to="/profile" className="text-gray-100 font-medium">
-                  <span className="text-gray-100 font-medium flex items-center">
-                    <img
-                      src={user.photoURL}
-                      alt={user.name}
-                      className="w-8 h-8 rounded-full"
-                    />
-                  </span>
+                    <span className="text-gray-100 font-medium flex items-center">
+                      <img
+                        src={user.photoURL}
+                        alt={user.name}
+                        className="w-8 h-8 rounded-full"
+                      />
+                    </span>
                   </Link>
                   <button
                     onClick={handleLogout}
