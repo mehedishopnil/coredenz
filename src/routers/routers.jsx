@@ -13,6 +13,7 @@ import Checkout from "../components/Checkout/Checkout";
 import Orders from "../components/Orders/Orders";
 import Profile from "../pages/Profile/Profile";
 import SingleCategory from "../components/SingleCategory/SingleCategory";
+import About from "../pages/About/About";
 
 export const router = createBrowserRouter([
   {
@@ -68,6 +69,10 @@ export const router = createBrowserRouter([
       {
         path: "profile",
         element: <Profile />,
+      },
+      {
+        path: "about",
+        element: <About />,
       },
       {
         path: "single-category/:category",
