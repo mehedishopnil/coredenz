@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import { AuthContext } from '../../provider/AuthProvider/AuthProvider';
@@ -15,9 +15,24 @@ import {
   Star,
 } from 'lucide-react';
 import coverImg from '../../assets/images/CoreDenz-facebook-banner.jpg';
+import Services from '../../components/Services/Services';
 
 const Home = () => {
-  const { products, loading, error } = useContext(AuthContext);
+  const { services, products, loading, error } = useContext(AuthContext);
+  const [activeCategory, setActiveCategory] = useState('all');
+
+  // First filter required categories
+  const allowedCategories = ['web', 'mobile', 'backend'];
+
+  const filteredServicesCategory = services?.filter(s =>
+    allowedCategories.includes(s.category?.toLowerCase())
+  );
+
+  // Apply activeCategory filter on top of that
+  const filteredServices =
+    activeCategory === 'all'
+      ? filteredServicesCategory
+      : filteredServicesCategory.filter(s => s.category === activeCategory);
 
   // Category data with name and corresponding icon
   const Categories = [
@@ -264,6 +279,31 @@ const Home = () => {
             ))}
           </div>
         )}
+      </section>
+
+      {/* Featured Services Section */}
+      <section className="py-20 px-4 bg-gradient-to-b from-white to-gray-50">
+        <div className="text-center mb-12">
+          <div className="inline-block px-4 py-2 bg-[#00B4D8]/10 text-[#00B4D8] rounded-full font-semibold text-sm mb-4">
+            DEVELOPMENT SERVICES
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            What We Offer
+          </h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Comprehensive solutions tailored to your needs
+          </p>
+        </div>
+        <Services
+          filteredServicesCategory={filteredServicesCategory}
+          activeCategory={activeCategory}
+          setActiveCategory={setActiveCategory}
+          filteredServices={filteredServices}
+        />
+
+        <Link to="/services/development">
+          <button className="px-6 py-2.5 rounded-full font-semibold transition-all bg-[#00B4D8] text-white shadow-lg mt-10 mx-auto block hover:bg-[#00B4D8]/90"> Explore More</button>
+        </Link>
       </section>
 
       {/* Testimonials Section */}
