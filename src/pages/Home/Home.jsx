@@ -370,7 +370,7 @@ const Home = () => {
             filteredServices={graphicFilteredServices}
           />
 
-          <Link to="/services/design">
+          <Link to="/services/graphic-design">
             <button className="px-6 py-2.5 rounded-full font-semibold transition-all bg-[#00B4D8] text-white shadow-lg mt-10 mx-auto block hover:bg-[#00B4D8]/90">
               {' '}
               Explore More
