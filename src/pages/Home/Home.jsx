@@ -4,6 +4,7 @@ import ProductCard from '../../components/ProductCard/ProductCard';
 import { AuthContext } from '../../provider/AuthProvider/AuthProvider';
 import { BsFillLaptopFill } from 'react-icons/bs';
 import { MdDevicesOther } from 'react-icons/md';
+import { MdDesignServices } from 'react-icons/md';
 import {
   TrendingUp,
   Zap,
@@ -87,8 +88,8 @@ const Home = () => {
     },
     {
       name: 'Graphics Design',
-      icon: <MdDevicesOther className="text-3xl" />,
-      gradient: 'from-[#040144] to-purple-600',
+      icon: <MdDesignServices className="text-3xl" />,
+      gradient: 'from-orange-300 to-orange-500',
       count: 'View Services',
       link: '/services/graphic-design',
     },
@@ -236,7 +237,7 @@ const Home = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
           {Categories.map((category, index) => (
             <Link
               key={index}
